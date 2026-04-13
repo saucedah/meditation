@@ -373,9 +373,11 @@ function initAudio() {
   if (!audioCtx) {
     audioCtx = new (window.AudioContext || window.webkitAudioContext)();
   }
+  // iOS Safari requires resume() from a user gesture
   if (audioCtx.state === 'suspended') {
     audioCtx.resume();
   }
+  return audioCtx;
 }
 
 function createTone(freq, type, gainVal) {
@@ -386,15 +388,24 @@ function createTone(freq, type, gainVal) {
   g.gain.setValueAtTime(gainVal, audioCtx.currentTime);
   osc.connect(g);
   g.connect(gainNode);
-  osc.start();
+  osc.start(audioCtx.currentTime);
   oscillators.push({ osc, gain: g });
   return osc;
 }
 
 function startAudio(freq) {
   initAudio();
-  stopAudio();
 
+  // Stop any existing oscillators cleanly
+  oscillators.forEach(({ osc, gain }) => {
+    try { osc.stop(); } catch(e) {}
+  });
+  oscillators = [];
+
+  // Create fresh gain node
+  if (gainNode) {
+    try { gainNode.disconnect(); } catch(e) {}
+  }
   gainNode = audioCtx.createGain();
   gainNode.gain.setValueAtTime(currentVolume, audioCtx.currentTime);
   gainNode.connect(audioCtx.destination);
@@ -418,8 +429,12 @@ function startAudio(freq) {
 function stopAudio() {
   oscillators.forEach(({ osc, gain }) => {
     try {
-      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.5);
-      osc.stop(audioCtx.currentTime + 0.6);
+      if (audioCtx) {
+        gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.3);
+        osc.stop(audioCtx.currentTime + 0.4);
+      } else {
+        osc.stop();
+      }
     } catch(e) {}
   });
   oscillators = [];
@@ -431,6 +446,18 @@ function setVolume(val) {
     gainNode.gain.setValueAtTime(currentVolume, audioCtx.currentTime);
   }
 }
+
+// Unlock audio on first touch (iOS requirement)
+document.addEventListener('touchstart', function unlockAudio() {
+  initAudio();
+  // Create and immediately stop a silent buffer to unlock
+  const buf = audioCtx.createBuffer(1, 1, 22050);
+  const src = audioCtx.createBufferSource();
+  src.buffer = buf;
+  src.connect(audioCtx.destination);
+  src.start(0);
+  document.removeEventListener('touchstart', unlockAudio);
+}, { once: true });
 
 // --- TIMER ---
 function formatTime(seconds) {
@@ -493,33 +520,33 @@ function startPlayer(session, minutes) {
 
 function togglePlay() {
   if (isPlaying) {
+    // Pause
     isPlaying = false;
     stopAudio();
+    clearInterval(timerInterval);
     document.getElementById('play-btn').textContent = '▶';
   } else {
+    // Play or resume
     isPlaying = true;
+    initAudio();
     startAudio(currentSession.freq);
     if (timeLeft <= 0) {
-      startTimer(currentSession.minutes);
-    } else {
-      // Resume existing timer
-      startTimer(Math.ceil(timeLeft / 60) || currentSession.minutes);
-      timeLeft = timeLeft; // keep existing time
-      // Re-setup interval with current timeLeft
-      clearInterval(timerInterval);
-      timerInterval = setInterval(() => {
-        if (!isPlaying) return;
-        timeLeft--;
-        document.getElementById('p-timer').textContent = formatTime(timeLeft);
-        if (timeLeft <= 0) {
-          clearInterval(timerInterval);
-          stopAudio();
-          isPlaying = false;
-          document.getElementById('play-btn').textContent = '▶';
-          playEndChime();
-        }
-      }, 1000);
+      timeLeft = currentSession.minutes * 60;
     }
+    // Start countdown from current timeLeft
+    clearInterval(timerInterval);
+    document.getElementById('p-timer').textContent = formatTime(timeLeft);
+    timerInterval = setInterval(() => {
+      timeLeft--;
+      document.getElementById('p-timer').textContent = formatTime(timeLeft);
+      if (timeLeft <= 0) {
+        clearInterval(timerInterval);
+        stopAudio();
+        isPlaying = false;
+        document.getElementById('play-btn').textContent = '▶';
+        playEndChime();
+      }
+    }, 1000);
     document.getElementById('play-btn').textContent = '⏸';
   }
 }
