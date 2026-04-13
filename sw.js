@@ -1,4 +1,4 @@
-const CACHE = 'meditate-v1';
+const CACHE = 'meditate-v2';
 const ASSETS = ['/', '/index.html', '/manifest.json'];
 
 self.addEventListener('install', e => {
@@ -16,6 +16,11 @@ self.addEventListener('activate', e => {
 });
 
 self.addEventListener('fetch', e => {
+  // Don't cache audio files - they're too large
+  if (e.request.url.endsWith('.mp3')) {
+    e.respondWith(fetch(e.request));
+    return;
+  }
   e.respondWith(
     caches.match(e.request).then(r => r || fetch(e.request))
   );

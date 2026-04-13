@@ -35,7 +35,6 @@
   .screen { display: none; min-height: 100vh; min-height: 100dvh; padding: 20px; padding-top: env(safe-area-inset-top, 20px); }
   .screen.active { display: flex; flex-direction: column; }
 
-  /* Background animation */
   .bg-glow {
     position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 0; pointer-events: none;
     background: radial-gradient(ellipse at 50% 30%, rgba(90,50,150,0.15) 0%, transparent 70%);
@@ -61,7 +60,7 @@
   .home-card h2 { font-size: 22px; font-weight: 400; letter-spacing: 2px; }
   .home-card p { color: var(--text-dim); font-size: 13px; margin-top: 6px; }
 
-  /* List Screens */
+  /* List Header */
   .list-header {
     display: flex; align-items: center; padding: 20px 0 24px; gap: 16px;
   }
@@ -74,39 +73,6 @@
   }
   .back-btn:active { background: rgba(255,255,255,0.15); }
   .list-header h1 { font-size: 24px; font-weight: 300; letter-spacing: 2px; }
-
-  .list { display: flex; flex-direction: column; gap: 12px; max-width: 400px; width: 100%; margin: 0 auto; padding-bottom: 40px; }
-  .list-item {
-    background: var(--card-bg); border: 1px solid var(--card-border);
-    border-radius: 16px; padding: 20px; cursor: pointer;
-    display: flex; align-items: center; gap: 16px;
-    transition: all 0.2s ease;
-  }
-  .list-item:active { background: rgba(255,255,255,0.1); transform: scale(0.98); }
-  .list-item .freq-icon {
-    width: 50px; height: 50px; border-radius: 14px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 24px; flex-shrink: 0;
-  }
-  .list-item .info { flex: 1; }
-  .list-item .info h3 { font-size: 16px; font-weight: 500; margin-bottom: 3px; }
-  .list-item .info p { color: var(--text-dim); font-size: 12px; }
-  .list-item .arrow { color: var(--text-dim); font-size: 18px; }
-
-  /* Duration Picker */
-  .duration-picker {
-    display: flex; flex-direction: column; gap: 12px; max-width: 400px;
-    width: 100%; margin: 0 auto;
-  }
-  .duration-picker h2 { text-align: center; font-weight: 300; font-size: 18px; margin-bottom: 8px; color: var(--text-dim); }
-  .dur-btn {
-    background: var(--card-bg); border: 1px solid var(--card-border);
-    border-radius: 16px; padding: 24px; text-align: center;
-    cursor: pointer; transition: all 0.2s;
-  }
-  .dur-btn:active { background: rgba(255,255,255,0.1); transform: scale(0.97); }
-  .dur-btn h3 { font-size: 28px; font-weight: 300; }
-  .dur-btn p { color: var(--text-dim); font-size: 13px; margin-top: 4px; }
 
   /* Player Screen */
   .player { align-items: center; justify-content: center; text-align: center; }
@@ -130,9 +96,8 @@
   .player-ring:nth-child(3) { animation-delay: -2.6s; }
 
   .player-emoji { font-size: 64px; position: relative; z-index: 1; }
-  .player-freq { font-size: 14px; color: var(--accent); margin-top: 4px; letter-spacing: 2px; position: relative; z-index: 1; }
 
-  .player-title { font-size: 24px; font-weight: 300; letter-spacing: 2px; margin-bottom: 4px; }
+  .player-title { font-size: 22px; font-weight: 300; letter-spacing: 2px; margin-bottom: 4px; padding: 0 10px; }
   .player-subtitle { color: var(--text-dim); font-size: 13px; margin-bottom: 40px; }
 
   .timer { font-size: 56px; font-weight: 200; letter-spacing: 4px; margin-bottom: 40px; font-variant-numeric: tabular-nums; }
@@ -173,24 +138,11 @@
     background: var(--accent); cursor: pointer;
   }
 
-  /* Chakra colors */
-  .chakra-root { background: rgba(255,0,0,0.2); color: #ff4444; }
-  .chakra-sacral { background: rgba(255,140,0,0.2); color: #ff8c00; }
-  .chakra-solar { background: rgba(255,215,0,0.2); color: #ffd700; }
-  .chakra-heart { background: rgba(0,200,83,0.2); color: #00c853; }
-  .chakra-throat { background: rgba(0,176,255,0.2); color: #00b0ff; }
-  .chakra-third { background: rgba(101,31,255,0.2); color: #651fff; }
-  .chakra-crown { background: rgba(200,130,255,0.2); color: #c882ff; }
+  /* Loading */
+  .loading { color: var(--text-dim); font-size: 14px; margin-top: 8px; }
 
-  /* Meditation colors */
-  .med-calm { background: rgba(100,149,237,0.2); color: #6495ed; }
-  .med-focus { background: rgba(255,193,7,0.2); color: #ffc107; }
-  .med-heal { background: rgba(0,200,83,0.2); color: #00c853; }
-  .med-love { background: rgba(233,30,99,0.2); color: #e91e63; }
-  .med-sleep { background: rgba(63,81,181,0.2); color: #3f51b5; }
-  .med-energy { background: rgba(255,87,34,0.2); color: #ff5722; }
-  .med-spirit { background: rgba(156,39,176,0.2); color: #9c27b0; }
-  .med-ground { background: rgba(121,85,72,0.2); color: #c49a6c; }
+  .med-spiritual { background: rgba(156,39,176,0.2); color: #9c27b0; }
+  .med-quantum { background: rgba(100,149,237,0.2); color: #6495ed; }
 </style>
 </head>
 <body>
@@ -204,70 +156,15 @@
     <p>Find your inner peace</p>
   </div>
   <div class="home-cards">
-    <div class="home-card" onclick="showScreen('meditation-list')">
+    <div class="home-card" onclick="selectSession('limpieza')">
+      <span class="icon">✨</span>
+      <h2>Limpieza Energetica</h2>
+      <p>Mantras y canticos de elevacion espiritual</p>
+    </div>
+    <div class="home-card" onclick="selectSession('cuantica')">
       <span class="icon">🧘</span>
-      <h2>Meditation</h2>
-      <p>Guided frequencies for mindfulness</p>
-    </div>
-    <div class="home-card" onclick="showScreen('chakra-list')">
-      <span class="icon">🔮</span>
-      <h2>Chakras</h2>
-      <p>Balance your energy centers</p>
-    </div>
-  </div>
-</div>
-
-<!-- MEDITATION LIST -->
-<div id="meditation-list" class="screen">
-  <div class="list-header">
-    <div class="back-btn" onclick="showScreen('home')">&#8592;</div>
-    <h1>Meditation</h1>
-  </div>
-  <div class="list" id="med-list"></div>
-</div>
-
-<!-- MEDITATION DURATION -->
-<div id="med-duration" class="screen">
-  <div class="list-header">
-    <div class="back-btn" onclick="showScreen('meditation-list')">&#8592;</div>
-    <h1 id="med-dur-title">Duration</h1>
-  </div>
-  <div class="duration-picker">
-    <h2>Choose your session length</h2>
-    <div class="dur-btn" onclick="startPlayer(selectedMed, 15)">
-      <h3>15 min</h3><p>Quick session</p>
-    </div>
-    <div class="dur-btn" onclick="startPlayer(selectedMed, 30)">
-      <h3>30 min</h3><p>Standard session</p>
-    </div>
-    <div class="dur-btn" onclick="startPlayer(selectedMed, 60)">
-      <h3>60 min</h3><p>Deep session</p>
-    </div>
-  </div>
-</div>
-
-<!-- CHAKRA LIST -->
-<div id="chakra-list" class="screen">
-  <div class="list-header">
-    <div class="back-btn" onclick="showScreen('home')">&#8592;</div>
-    <h1>Chakras</h1>
-  </div>
-  <div class="list" id="chk-list"></div>
-</div>
-
-<!-- CHAKRA DURATION -->
-<div id="chakra-duration" class="screen">
-  <div class="list-header">
-    <div class="back-btn" onclick="showScreen('chakra-list')">&#8592;</div>
-    <h1 id="chk-dur-title">Duration</h1>
-  </div>
-  <div class="duration-picker">
-    <h2>Choose your session length</h2>
-    <div class="dur-btn" onclick="startPlayer(selectedChakra, 30)">
-      <h3>30 min</h3><p>Standard healing</p>
-    </div>
-    <div class="dur-btn" onclick="startPlayer(selectedChakra, 60)">
-      <h3>60 min</h3><p>Deep healing</p>
+      <h2>Meditacion Cuantica</h2>
+      <p>Viaje al interior con Metodo Wim Hof</p>
     </div>
   </div>
 </div>
@@ -280,298 +177,139 @@
     <div class="player-ring pulse"></div>
     <div class="player-ring pulse"></div>
     <span class="player-emoji" id="p-emoji"></span>
-    <span class="player-freq" id="p-freq"></span>
   </div>
   <h2 class="player-title" id="p-title"></h2>
   <p class="player-subtitle" id="p-sub"></p>
-  <div class="timer" id="p-timer">30:00</div>
+  <div class="timer" id="p-timer">00:00</div>
   <div class="controls">
-    <div class="ctrl-btn" onclick="restartTimer()">↺</div>
+    <div class="ctrl-btn" onclick="restartAudio()">↺</div>
     <div class="ctrl-btn play" id="play-btn" onclick="togglePlay()">▶</div>
     <div class="ctrl-btn" onclick="stopAndBack()">■</div>
   </div>
   <div class="volume-row">
     <span>🔈</span>
-    <input type="range" min="0" max="100" value="60" id="vol-slider" oninput="setVolume(this.value)">
+    <input type="range" min="0" max="100" value="80" id="vol-slider" oninput="setVolume(this.value)">
     <span>🔊</span>
   </div>
+  <p class="loading" id="loading-msg"></p>
 </div>
 
 <script>
-// --- DATA ---
-const meditations = [
-  { id:'calm', name:'Deep Calm', desc:'Relax your mind and body', freq:396, freqNote:'396 Hz — Liberation', emoji:'🌊', cls:'med-calm', type:'meditation' },
-  { id:'focus', name:'Focus & Clarity', desc:'Sharpen your concentration', freq:417, freqNote:'417 Hz — Change', emoji:'🎯', cls:'med-focus', type:'meditation' },
-  { id:'heal', name:'Healing', desc:'Restore and rejuvenate', freq:528, freqNote:'528 Hz — Miracles', emoji:'💚', cls:'med-heal', type:'meditation' },
-  { id:'love', name:'Love & Compassion', desc:'Open your heart', freq:639, freqNote:'639 Hz — Connection', emoji:'💗', cls:'med-love', type:'meditation' },
-  { id:'sleep', name:'Deep Sleep', desc:'Drift into restful slumber', freq:174, freqNote:'174 Hz — Foundation', emoji:'🌙', cls:'med-sleep', type:'meditation' },
-  { id:'energy', name:'Energy Boost', desc:'Awaken your vitality', freq:741, freqNote:'741 Hz — Expression', emoji:'⚡', cls:'med-energy', type:'meditation' },
-  { id:'spirit', name:'Spiritual Awareness', desc:'Connect with higher self', freq:852, freqNote:'852 Hz — Intuition', emoji:'✨', cls:'med-spirit', type:'meditation' },
-  { id:'ground', name:'Grounding', desc:'Root into the earth', freq:256, freqNote:'256 Hz — Earth', emoji:'🌿', cls:'med-ground', type:'meditation' },
-];
+const sessions = {
+  limpieza: {
+    name: 'Limpieza Energetica',
+    desc: 'Mantras y canticos de elevacion espiritual',
+    emoji: '✨',
+    file: 'audio/LIMPIEZA ENERGETICA Mantras  y canticos de Elevación Espiritual. Elimina Energía Negativa y Bloqueos.mp3'
+  },
+  cuantica: {
+    name: 'Meditacion Cuantica',
+    desc: 'Viaje al interior con Metodo Wim Hof',
+    emoji: '🧘',
+    file: 'audio/Meditación Cuántica –Viaje al Interior con Método Wim Hof ｜Conecta con tus cuerpos ｜Yessy Hiolística.mp3'
+  }
+};
 
-const chakras = [
-  { id:'root', name:'Root Chakra', desc:'Muladhara — Stability & security', freq:396, freqNote:'396 Hz', emoji:'🔴', cls:'chakra-root', type:'chakra', backTo:'chakra-list' },
-  { id:'sacral', name:'Sacral Chakra', desc:'Svadhisthana — Creativity & emotion', freq:417, freqNote:'417 Hz', emoji:'🟠', cls:'chakra-sacral', type:'chakra', backTo:'chakra-list' },
-  { id:'solar', name:'Solar Plexus', desc:'Manipura — Confidence & power', freq:528, freqNote:'528 Hz', emoji:'🟡', cls:'chakra-solar', type:'chakra', backTo:'chakra-list' },
-  { id:'heart', name:'Heart Chakra', desc:'Anahata — Love & harmony', freq:639, freqNote:'639 Hz', emoji:'💚', cls:'chakra-heart', type:'chakra', backTo:'chakra-list' },
-  { id:'throat', name:'Throat Chakra', desc:'Vishuddha — Truth & expression', freq:741, freqNote:'741 Hz', emoji:'🔵', cls:'chakra-throat', type:'chakra', backTo:'chakra-list' },
-  { id:'third', name:'Third Eye', desc:'Ajna — Intuition & wisdom', freq:852, freqNote:'852 Hz', emoji:'🟣', cls:'chakra-third', type:'chakra', backTo:'chakra-list' },
-  { id:'crown', name:'Crown Chakra', desc:'Sahasrara — Divine connection', freq:963, freqNote:'963 Hz', emoji:'⚪', cls:'chakra-crown', type:'chakra', backTo:'chakra-list' },
-];
-
-let selectedMed = null;
-let selectedChakra = null;
 let currentSession = null;
-let audioCtx = null;
-let oscillators = [];
-let gainNode = null;
+let audio = null;
 let timerInterval = null;
-let timeLeft = 0;
 let isPlaying = false;
-let currentVolume = 0.6;
 
-// --- SCREENS ---
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
 }
 
-// --- BUILD LISTS ---
-function buildList(containerId, items, onClickFn) {
-  const container = document.getElementById(containerId);
-  items.forEach(item => {
-    const el = document.createElement('div');
-    el.className = 'list-item';
-    el.onclick = () => onClickFn(item);
-    el.innerHTML = `
-      <div class="freq-icon ${item.cls}">${item.emoji}</div>
-      <div class="info">
-        <h3>${item.name}</h3>
-        <p>${item.desc} — ${item.freqNote}</p>
-      </div>
-      <span class="arrow">›</span>
-    `;
-    container.appendChild(el);
-  });
-}
-
-buildList('med-list', meditations, (item) => {
-  selectedMed = item;
-  document.getElementById('med-dur-title').textContent = item.name;
-  showScreen('med-duration');
-});
-
-buildList('chk-list', chakras, (item) => {
-  selectedChakra = item;
-  document.getElementById('chk-dur-title').textContent = item.name;
-  showScreen('chakra-duration');
-});
-
-// --- AUDIO ENGINE ---
-function initAudio() {
-  if (!audioCtx) {
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  }
-  // iOS Safari requires resume() from a user gesture
-  if (audioCtx.state === 'suspended') {
-    audioCtx.resume();
-  }
-  return audioCtx;
-}
-
-function createTone(freq, type, gainVal) {
-  const osc = audioCtx.createOscillator();
-  const g = audioCtx.createGain();
-  osc.type = type;
-  osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-  g.gain.setValueAtTime(gainVal, audioCtx.currentTime);
-  osc.connect(g);
-  g.connect(gainNode);
-  osc.start(audioCtx.currentTime);
-  oscillators.push({ osc, gain: g });
-  return osc;
-}
-
-function startAudio(freq) {
-  initAudio();
-
-  // Stop any existing oscillators cleanly
-  oscillators.forEach(({ osc, gain }) => {
-    try { osc.stop(); } catch(e) {}
-  });
-  oscillators = [];
-
-  // Create fresh gain node
-  if (gainNode) {
-    try { gainNode.disconnect(); } catch(e) {}
-  }
-  gainNode = audioCtx.createGain();
-  gainNode.gain.setValueAtTime(currentVolume, audioCtx.currentTime);
-  gainNode.connect(audioCtx.destination);
-
-  // Main solfeggio frequency - soft sine
-  createTone(freq, 'sine', 0.35);
-
-  // Sub harmonic for depth
-  createTone(freq / 2, 'sine', 0.15);
-
-  // Gentle binaural-like effect (slight detune)
-  createTone(freq + 3, 'sine', 0.12);
-
-  // Soft pad tone octave up
-  createTone(freq * 2, 'sine', 0.05);
-
-  // Very subtle triangle wave for texture
-  createTone(freq * 1.5, 'triangle', 0.03);
-}
-
-function stopAudio() {
-  oscillators.forEach(({ osc, gain }) => {
-    try {
-      if (audioCtx) {
-        gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.3);
-        osc.stop(audioCtx.currentTime + 0.4);
-      } else {
-        osc.stop();
-      }
-    } catch(e) {}
-  });
-  oscillators = [];
-}
-
-function setVolume(val) {
-  currentVolume = val / 100;
-  if (gainNode && audioCtx) {
-    gainNode.gain.setValueAtTime(currentVolume, audioCtx.currentTime);
-  }
-}
-
-// Unlock audio on first touch (iOS requirement)
-document.addEventListener('touchstart', function unlockAudio() {
-  initAudio();
-  // Create and immediately stop a silent buffer to unlock
-  const buf = audioCtx.createBuffer(1, 1, 22050);
-  const src = audioCtx.createBufferSource();
-  src.buffer = buf;
-  src.connect(audioCtx.destination);
-  src.start(0);
-  document.removeEventListener('touchstart', unlockAudio);
-}, { once: true });
-
-// --- TIMER ---
 function formatTime(seconds) {
+  if (isNaN(seconds) || seconds < 0) seconds = 0;
   const m = Math.floor(seconds / 60);
-  const s = seconds % 60;
+  const s = Math.floor(seconds % 60);
   return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
 }
 
-function startTimer(minutes) {
-  clearInterval(timerInterval);
-  timeLeft = minutes * 60;
-  document.getElementById('p-timer').textContent = formatTime(timeLeft);
+function selectSession(id) {
+  currentSession = sessions[id];
 
-  timerInterval = setInterval(() => {
-    if (!isPlaying) return;
-    timeLeft--;
-    document.getElementById('p-timer').textContent = formatTime(timeLeft);
-    if (timeLeft <= 0) {
-      clearInterval(timerInterval);
-      stopAudio();
-      isPlaying = false;
-      document.getElementById('play-btn').textContent = '▶';
-      // Play a gentle ending chime
-      playEndChime();
-    }
-  }, 1000);
-}
-
-function playEndChime() {
-  initAudio();
-  const chimeGain = audioCtx.createGain();
-  chimeGain.gain.setValueAtTime(0.3, audioCtx.currentTime);
-  chimeGain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 4);
-  chimeGain.connect(audioCtx.destination);
-
-  [528, 639, 741].forEach((f, i) => {
-    const o = audioCtx.createOscillator();
-    o.type = 'sine';
-    o.frequency.setValueAtTime(f, audioCtx.currentTime + i * 0.5);
-    o.connect(chimeGain);
-    o.start(audioCtx.currentTime + i * 0.5);
-    o.stop(audioCtx.currentTime + i * 0.5 + 3);
-  });
-}
-
-// --- PLAYER ---
-function startPlayer(session, minutes) {
-  currentSession = { ...session, minutes };
-
-  document.getElementById('p-emoji').textContent = session.emoji;
-  document.getElementById('p-freq').textContent = session.freqNote;
-  document.getElementById('p-title').textContent = session.name;
-  document.getElementById('p-sub').textContent = session.desc + ' — ' + minutes + ' min';
-  document.getElementById('p-timer').textContent = formatTime(minutes * 60);
+  document.getElementById('p-emoji').textContent = currentSession.emoji;
+  document.getElementById('p-title').textContent = currentSession.name;
+  document.getElementById('p-sub').textContent = currentSession.desc;
+  document.getElementById('p-timer').textContent = '00:00';
   document.getElementById('play-btn').textContent = '▶';
+  document.getElementById('loading-msg').textContent = '';
+
+  // Stop any previous audio
+  if (audio) {
+    audio.pause();
+    audio.src = '';
+  }
+
+  // Create new audio element
+  audio = new Audio(currentSession.file);
+  audio.volume = document.getElementById('vol-slider').value / 100;
+  audio.loop = true;
+  audio.preload = 'auto';
+
+  // Update timer display as audio plays
+  audio.addEventListener('timeupdate', () => {
+    document.getElementById('p-timer').textContent = formatTime(audio.currentTime);
+  });
+
+  audio.addEventListener('ended', () => {
+    // loop is on, but just in case
+    isPlaying = false;
+    document.getElementById('play-btn').textContent = '▶';
+  });
 
   isPlaying = false;
   showScreen('player');
 }
 
 function togglePlay() {
+  if (!audio || !currentSession) return;
+
   if (isPlaying) {
-    // Pause
+    audio.pause();
     isPlaying = false;
-    stopAudio();
-    clearInterval(timerInterval);
     document.getElementById('play-btn').textContent = '▶';
   } else {
-    // Play or resume
-    isPlaying = true;
-    initAudio();
-    startAudio(currentSession.freq);
-    if (timeLeft <= 0) {
-      timeLeft = currentSession.minutes * 60;
-    }
-    // Start countdown from current timeLeft
-    clearInterval(timerInterval);
-    document.getElementById('p-timer').textContent = formatTime(timeLeft);
-    timerInterval = setInterval(() => {
-      timeLeft--;
-      document.getElementById('p-timer').textContent = formatTime(timeLeft);
-      if (timeLeft <= 0) {
-        clearInterval(timerInterval);
-        stopAudio();
+    document.getElementById('loading-msg').textContent = 'Loading audio...';
+    const playPromise = audio.play();
+    if (playPromise !== undefined) {
+      playPromise.then(() => {
+        document.getElementById('loading-msg').textContent = '';
+        isPlaying = true;
+        document.getElementById('play-btn').textContent = '⏸';
+      }).catch(err => {
+        document.getElementById('loading-msg').textContent = 'Tap play again';
         isPlaying = false;
-        document.getElementById('play-btn').textContent = '▶';
-        playEndChime();
-      }
-    }, 1000);
-    document.getElementById('play-btn').textContent = '⏸';
+      });
+    }
   }
 }
 
-function restartTimer() {
-  if (currentSession) {
-    stopAudio();
-    isPlaying = false;
-    clearInterval(timerInterval);
-    timeLeft = currentSession.minutes * 60;
-    document.getElementById('p-timer').textContent = formatTime(timeLeft);
-    document.getElementById('play-btn').textContent = '▶';
+function restartAudio() {
+  if (audio) {
+    audio.currentTime = 0;
+    document.getElementById('p-timer').textContent = '00:00';
+    if (isPlaying) {
+      audio.play();
+    }
+  }
+}
+
+function setVolume(val) {
+  if (audio) {
+    audio.volume = val / 100;
   }
 }
 
 function stopAndBack() {
-  stopAudio();
-  isPlaying = false;
-  clearInterval(timerInterval);
-  timeLeft = 0;
-  if (currentSession && currentSession.type === 'chakra') {
-    showScreen('chakra-duration');
-  } else {
-    showScreen('med-duration');
+  if (audio) {
+    audio.pause();
+    audio.currentTime = 0;
   }
+  isPlaying = false;
+  showScreen('home');
 }
 
 // Register service worker for offline
