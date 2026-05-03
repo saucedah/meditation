@@ -1,11 +1,5 @@
-const CACHE = 'meditate-v3';
-const ASSETS = [
-  '/',
-  '/index.html',
-  '/manifest.json',
-  '/notes.html',
-  '/notes-manifest.json'
-];
+const CACHE = 'meditate-v2';
+const ASSETS = ['/', '/index.html', '/manifest.json'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)));
