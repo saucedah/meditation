@@ -1,0 +1,14 @@
+{
+  "name": "My Apps",
+  "short_name": "Apps",
+  "description": "Personal launcher for all my web apps",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a",
+  "orientation": "portrait",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}

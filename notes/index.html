@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Notes">
+<meta name="theme-color" content="#fdf6ec">
+<link rel="icon" type="image/svg+xml" href="icon.svg">
+<link rel="apple-touch-icon" href="icon.svg">
+<link rel="manifest" href="manifest.json">
+<title>Notes</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #fdf6ec;
+    --bg-alt: #fff9ee;
+    --card-bg: #ffffff;
+    --card-border: #ece2cf;
+    --text: #2b2418;
+    --text-dim: #8a7d65;
+    --accent: #d97706;
+    --accent-soft: #fde9c9;
+    --remember: #d97706;
+    --remember-soft: #fde9c9;
+    --buy: #0d9488;
+    --buy-soft: #cdf2ec;
+    --projects: #7c3aed;
+    --projects-soft: #ebe0fc;
+    --danger: #dc2626;
+    --shadow: 0 1px 3px rgba(60,40,10,0.06), 0 4px 16px rgba(60,40,10,0.04);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1a1612;
+      --bg-alt: #221d17;
+      --card-bg: #2a241c;
+      --card-border: #3a3225;
+      --text: #f3ead8;
+      --text-dim: #998c75;
+      --accent: #f59e0b;
+      --accent-soft: rgba(245,158,11,0.18);
+      --remember: #f59e0b;
+      --remember-soft: rgba(245,158,11,0.15);
+      --buy: #2dd4bf;
+      --buy-soft: rgba(45,212,191,0.15);
+      --projects: #a78bfa;
+      --projects-soft: rgba(167,139,250,0.15);
+      --danger: #ef4444;
+      --shadow: 0 1px 3px rgba(0,0,0,0.3), 0 4px 16px rgba(0,0,0,0.2);
+    }
+  }
+
+  body {
+    font-family: ui-serif, Georgia, 'Iowan Old Style', 'Apple Garamond', serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    min-height: 100dvh;
+    overflow-x: hidden;
+    -webkit-tap-highlight-color: transparent;
+    line-height: 1.4;
+  }
+
+  .screen {
+    display: none;
+    min-height: 100vh; min-height: 100dvh;
+    padding: 20px;
+    padding-top: max(env(safe-area-inset-top, 20px), 20px);
+    padding-bottom: max(env(safe-area-inset-bottom, 20px), 20px);
+    max-width: 720px; margin: 0 auto;
+  }
+  .screen.active { display: flex; flex-direction: column; }
+
+  /* Home */
+  .home-header { text-align: center; padding: 32px 0 28px; }
+  .home-header .logo { font-size: 52px; display: block; margin-bottom: 8px; }
+  .home-header h1 {
+    font-size: 34px; font-weight: 600;
+    letter-spacing: -0.5px;
+    font-family: ui-serif, Georgia, serif;
+  }
+  .home-header p {
+    color: var(--text-dim); margin-top: 6px; font-size: 14px;
+    font-style: italic;
+    font-family: ui-serif, Georgia, serif;
+  }
+
+  .home-cards { display: flex; flex-direction: column; gap: 12px; width: 100%; }
+  .home-card {
+    background: var(--card-bg); border: 1px solid var(--card-border);
+    border-radius: 14px; padding: 18px;
+    cursor: pointer; transition: all 0.18s ease;
+    display: flex; align-items: center; gap: 16px;
+    box-shadow: var(--shadow);
+  }
+  .home-card:active { transform: scale(0.985); }
+  .home-card:hover { border-color: var(--text-dim); }
+  .home-card .icon {
+    font-size: 28px; width: 52px; height: 52px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 12px;
+    flex-shrink: 0;
+  }
+  .home-card.remember .icon { background: var(--remember-soft); }
+  .home-card.buy .icon { background: var(--buy-soft); }
+  .home-card.projects .icon { background: var(--projects-soft); }
+
+  .home-card .meta { flex: 1; min-width: 0; }
+  .home-card h2 {
+    font-size: 19px; font-weight: 600;
+    font-family: ui-serif, Georgia, serif;
+  }
+  .home-card .sub {
+    color: var(--text-dim); font-size: 13px; margin-top: 2px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+  .home-card .count {
+    background: var(--bg-alt);
+    color: var(--text-dim);
+    border-radius: 999px;
+    padding: 4px 12px;
+    font-size: 13px;
+    font-variant-numeric: tabular-nums;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    min-width: 36px;
+    text-align: center;
+  }
+
+  .home-tools {
+    display: flex; gap: 10px; margin-top: 24px; flex-wrap: wrap; justify-content: center;
+  }
+  .tool-btn {
+    background: var(--card-bg); border: 1px solid var(--card-border);
+    color: var(--text); padding: 10px 16px; border-radius: 10px;
+    font-size: 13px; cursor: pointer; transition: all 0.18s;
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    box-shadow: var(--shadow);
+  }
+  .tool-btn:active { transform: scale(0.97); }
+  .tool-btn:hover { border-color: var(--text-dim); }
+
+  .home-foot {
+    text-align: center; margin-top: 28px; color: var(--text-dim);
+    font-size: 12px; font-style: italic;
+  }
+
+  /* List screen */
+  .list-header {
+    display: flex; align-items: center; padding: 4px 0 18px; gap: 14px;
+  }
+  .back-btn {
+    background: var(--card-bg); border: 1px solid var(--card-border);
+    border-radius: 10px; width: 40px; height: 40px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; color: var(--text); font-size: 18px;
+    flex-shrink: 0; transition: all 0.18s;
+    box-shadow: var(--shadow);
+  }
+  .back-btn:active { transform: scale(0.94); }
+  .list-header h1 {
+    font-size: 22px; font-weight: 600; flex: 1;
+    font-family: ui-serif, Georgia, serif;
+  }
+
+  .add-row { display: flex; gap: 8px; margin-bottom: 14px; }
+  .add-row input {
+    flex: 1; background: var(--card-bg); border: 1px solid var(--card-border);
+    color: var(--text); padding: 13px 16px; border-radius: 10px;
+    font-size: 16px; outline: none; transition: border-color 0.18s;
+    -webkit-appearance: none;
+    font-family: ui-serif, Georgia, serif;
+    box-shadow: var(--shadow);
+  }
+  .add-row input:focus { border-color: var(--accent); }
+  .add-row input::placeholder { color: var(--text-dim); font-style: italic; }
+  .add-btn {
+    background: var(--accent); border: 1px solid var(--accent);
+    color: #fff; padding: 0 18px; border-radius: 10px;
+    font-size: 22px; cursor: pointer; min-width: 50px;
+    transition: transform 0.1s;
+    box-shadow: var(--shadow);
+  }
+  .add-btn:active { transform: scale(0.95); }
+
+  .items { display: flex; flex-direction: column; gap: 6px; flex: 1; }
+  .item {
+    display: flex; align-items: flex-start; gap: 12px;
+    background: var(--card-bg); border: 1px solid var(--card-border);
+    border-radius: 10px; padding: 12px 14px;
+    transition: background 0.15s;
+    box-shadow: var(--shadow);
+  }
+  .item.done { opacity: 0.55; }
+  .item.done .item-text { text-decoration: line-through; color: var(--text-dim); }
+
+  .item-check {
+    flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%;
+    border: 2px solid var(--text-dim);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: all 0.15s;
+    margin-top: 2px;
+  }
+  .item-check.checked {
+    background: var(--accent); border-color: var(--accent);
+  }
+  .item-check.checked::after {
+    content: '✓'; color: #fff; font-size: 13px; font-weight: bold;
+  }
+
+  .item-text {
+    flex: 1; font-size: 16px; line-height: 1.45; word-break: break-word;
+    cursor: text; padding: 1px 0;
+    white-space: pre-wrap;
+    font-family: ui-serif, Georgia, serif;
+  }
+  .item-text[contenteditable=true] {
+    outline: none;
+    background: var(--accent-soft);
+    border-radius: 6px;
+    padding: 4px 6px;
+    margin: -4px -6px;
+  }
+
+  .item-actions { display: flex; gap: 2px; flex-shrink: 0; }
+  .icon-btn {
+    background: transparent; border: none; color: var(--text-dim);
+    width: 32px; height: 32px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; font-size: 15px;
+    transition: all 0.15s;
+  }
+  .icon-btn:active { background: var(--bg-alt); color: var(--text); }
+  .icon-btn.delete:active { color: var(--danger); }
+
+  .empty {
+    text-align: center; color: var(--text-dim); padding: 50px 20px;
+    font-size: 15px; font-style: italic;
+  }
+  .empty .em { font-size: 44px; display: block; margin-bottom: 12px; opacity: 0.5; font-style: normal; }
+
+  .list-footer {
+    margin-top: 16px;
+    display: flex; justify-content: space-between; align-items: center;
+    color: var(--text-dim); font-size: 12px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+  .clear-link {
+    color: var(--text-dim); background: none; border: none;
+    font-size: 12px; cursor: pointer; padding: 6px 10px;
+    border-radius: 6px;
+    font-family: inherit;
+  }
+  .clear-link:active { color: var(--danger); background: var(--bg-alt); }
+
+  /* Theme accents per list */
+  .list[data-list=remember] .item-check.checked { background: var(--remember); border-color: var(--remember); }
+  .list[data-list=remember] .add-btn { background: var(--remember); border-color: var(--remember); }
+  .list[data-list=remember] .add-row input:focus { border-color: var(--remember); }
+  .list[data-list=remember] .item-text[contenteditable=true] { background: var(--remember-soft); }
+
+  .list[data-list=buy] .item-check.checked { background: var(--buy); border-color: var(--buy); }
+  .list[data-list=buy] .add-btn { background: var(--buy); border-color: var(--buy); }
+  .list[data-list=buy] .add-row input:focus { border-color: var(--buy); }
+  .list[data-list=buy] .item-text[contenteditable=true] { background: var(--buy-soft); }
+
+  .list[data-list=projects] .item-check.checked { background: var(--projects); border-color: var(--projects); }
+  .list[data-list=projects] .add-btn { background: var(--projects); border-color: var(--projects); }
+  .list[data-list=projects] .add-row input:focus { border-color: var(--projects); }
+  .list[data-list=projects] .item-text[contenteditable=true] { background: var(--projects-soft); }
+
+  /* Modal */
+  .modal-backdrop {
+    position: fixed; inset: 0; background: rgba(20,15,5,0.4);
+    display: none; align-items: center; justify-content: center;
+    z-index: 100; padding: 20px;
+    backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+  }
+  .modal-backdrop.active { display: flex; }
+  .modal {
+    background: var(--card-bg); border: 1px solid var(--card-border);
+    border-radius: 14px; padding: 22px;
+    max-width: 480px; width: 100%;
+    max-height: 80vh; overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+  }
+  .modal h2 {
+    font-size: 19px; margin-bottom: 12px; font-weight: 600;
+    font-family: ui-serif, Georgia, serif;
+  }
+  .modal p {
+    color: var(--text-dim); font-size: 14px; line-height: 1.5; margin-bottom: 14px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+  .modal textarea {
+    width: 100%; background: var(--bg-alt); border: 1px solid var(--card-border);
+    color: var(--text); padding: 12px; border-radius: 10px;
+    font-family: ui-monospace, Menlo, monospace; font-size: 12px;
+    min-height: 160px; resize: vertical; outline: none;
+  }
+  .modal-actions {
+    display: flex; gap: 8px; justify-content: flex-end; margin-top: 14px;
+    flex-wrap: wrap;
+  }
+  .btn {
+    padding: 10px 18px; border-radius: 9px; font-size: 14px;
+    cursor: pointer; border: 1px solid var(--card-border);
+    background: var(--card-bg); color: var(--text);
+    transition: all 0.18s;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+  .btn:active { transform: scale(0.97); }
+  .btn:hover { border-color: var(--text-dim); }
+  .btn.primary {
+    background: var(--accent); border-color: var(--accent); color: #fff;
+  }
+  .btn.primary:hover { border-color: var(--accent); filter: brightness(1.05); }
+
+  .toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(100px);
+    background: var(--text); color: var(--bg);
+    padding: 11px 20px; border-radius: 999px;
+    font-size: 14px; z-index: 200;
+    transition: transform 0.3s ease;
+    box-shadow: 0 8px 28px rgba(0,0,0,0.25);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+
+<!-- HOME -->
+<div id="home" class="screen active">
+  <div class="home-header">
+    <span class="logo">📒</span>
+    <h1>Notes</h1>
+    <p>capture · plan · remember</p>
+  </div>
+
+  <div class="home-cards">
+    <div class="home-card remember" onclick="openList('remember')">
+      <span class="icon">💡</span>
+      <div class="meta">
+        <h2>Things to Remember</h2>
+        <div class="sub">Ideas, notes, anything important</div>
+      </div>
+      <span class="count" id="count-remember">0</span>
+    </div>
+    <div class="home-card buy" onclick="openList('buy')">
+      <span class="icon">🛒</span>
+      <div class="meta">
+        <h2>Things to Buy</h2>
+        <div class="sub">Shopping list, errands</div>
+      </div>
+      <span class="count" id="count-buy">0</span>
+    </div>
+    <div class="home-card projects" onclick="openList('projects')">
+      <span class="icon">🚀</span>
+      <div class="meta">
+        <h2>Projects</h2>
+        <div class="sub">Goals & ongoing work</div>
+      </div>
+      <span class="count" id="count-projects">0</span>
+    </div>
+  </div>
+
+  <div class="home-tools">
+    <button class="tool-btn" onclick="openExport()">⬆️ Export</button>
+    <button class="tool-btn" onclick="openImport()">⬇️ Import</button>
+  </div>
+
+  <div class="home-foot">Saved on this device · use Export/Import to sync</div>
+</div>
+
+<!-- LIST -->
+<div id="list" class="screen list">
+  <div class="list-header">
+    <div class="back-btn" onclick="showHome()">&#8592;</div>
+    <h1 id="list-title">List</h1>
+  </div>
+
+  <div class="add-row">
+    <input id="add-input" type="text" placeholder="Add new item..." autocomplete="off"
+           onkeydown="if(event.key==='Enter') addItem()">
+    <button class="add-btn" onclick="addItem()">+</button>
+  </div>
+
+  <div class="items" id="items"></div>
+
+  <div class="list-footer">
+    <span id="list-stats">0 items</span>
+    <button class="clear-link" onclick="clearCompleted()">Clear completed</button>
+  </div>
+</div>
+
+<!-- Export modal -->
+<div class="modal-backdrop" id="export-modal">
+  <div class="modal">
+    <h2>Export your notes</h2>
+    <p>Copy this text and paste it into the Import box on another device. Notes are stored locally per device — Export/Import lets you sync them manually.</p>
+    <textarea id="export-text" readonly></textarea>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal('export-modal')">Close</button>
+      <button class="btn primary" onclick="copyExport()">Copy</button>
+    </div>
+  </div>
+</div>
+
+<!-- Import modal -->
+<div class="modal-backdrop" id="import-modal">
+  <div class="modal">
+    <h2>Import notes</h2>
+    <p>Paste an exported notes string below. <strong>Merge</strong> adds new items; <strong>Replace all</strong> overwrites everything.</p>
+    <textarea id="import-text" placeholder="Paste exported JSON here..."></textarea>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal('import-modal')">Cancel</button>
+      <button class="btn" onclick="doImport(true)">Replace all</button>
+      <button class="btn primary" onclick="doImport(false)">Merge</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  const STORAGE_KEY = 'notes-app-data-v1';
+  const LISTS = {
+    remember: { title: 'Things to Remember', emoji: '💡' },
+    buy:      { title: 'Things to Buy',      emoji: '🛒' },
+    projects: { title: 'Projects',           emoji: '🚀' }
+  };
+
+  let state = loadState();
+  let currentList = null;
+
+  function loadState() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        for (const k of Object.keys(LISTS)) {
+          if (!Array.isArray(parsed[k])) parsed[k] = [];
+        }
+        return parsed;
+      }
+    } catch (e) {
+      console.warn('Failed to load notes', e);
+    }
+    return { remember: [], buy: [], projects: [] };
+  }
+
+  function saveState() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    } catch (e) {
+      toast('Could not save. Storage may be full.');
+    }
+  }
+
+  function uid() {
+    return Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+  }
+
+  function showHome() {
+    currentList = null;
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById('home').classList.add('active');
+    updateCounts();
+  }
+
+  function openList(key) {
+    currentList = key;
+    document.getElementById('list-title').textContent =
+      `${LISTS[key].emoji} ${LISTS[key].title}`;
+    document.getElementById('list').dataset.list = key;
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById('list').classList.add('active');
+    document.getElementById('add-input').value = '';
+    renderItems();
+    setTimeout(() => document.getElementById('add-input').focus(), 50);
+  }
+
+  function updateCounts() {
+    for (const k of Object.keys(LISTS)) {
+      const open = state[k].filter(i => !i.done).length;
+      document.getElementById('count-' + k).textContent = open;
+    }
+  }
+
+  function renderItems() {
+    const list = state[currentList] || [];
+    const container = document.getElementById('items');
+    container.innerHTML = '';
+
+    if (list.length === 0) {
+      container.innerHTML = `
+        <div class="empty">
+          <span class="em">${LISTS[currentList].emoji}</span>
+          Nothing here yet. Add something above.
+        </div>`;
+    } else {
+      const sorted = [...list].sort((a, b) => {
+        if (a.done !== b.done) return a.done ? 1 : -1;
+        return b.createdAt - a.createdAt;
+      });
+      for (const item of sorted) {
+        container.appendChild(renderItem(item));
+      }
+    }
+
+    const total = list.length;
+    const open = list.filter(i => !i.done).length;
+    document.getElementById('list-stats').textContent =
+      total === 0 ? '0 items' : `${open} open · ${total} total`;
+  }
+
+  function renderItem(item) {
+    const row = document.createElement('div');
+    row.className = 'item' + (item.done ? ' done' : '');
+    row.dataset.id = item.id;
+
+    const check = document.createElement('div');
+    check.className = 'item-check' + (item.done ? ' checked' : '');
+    check.onclick = () => toggleItem(item.id);
+
+    const text = document.createElement('div');
+    text.className = 'item-text';
+    text.textContent = item.text;
+    text.onclick = () => startEdit(text, item.id);
+
+    const actions = document.createElement('div');
+    actions.className = 'item-actions';
+
+    const editBtn = document.createElement('button');
+    editBtn.className = 'icon-btn';
+    editBtn.innerHTML = '✎';
+    editBtn.title = 'Edit';
+    editBtn.onclick = (e) => { e.stopPropagation(); startEdit(text, item.id); };
+
+    const delBtn = document.createElement('button');
+    delBtn.className = 'icon-btn delete';
+    delBtn.innerHTML = '✕';
+    delBtn.title = 'Delete';
+    delBtn.onclick = (e) => { e.stopPropagation(); deleteItem(item.id); };
+
+    actions.appendChild(editBtn);
+    actions.appendChild(delBtn);
+
+    row.appendChild(check);
+    row.appendChild(text);
+    row.appendChild(actions);
+    return row;
+  }
+
+  function startEdit(textEl, id) {
+    if (textEl.isContentEditable) return;
+    textEl.contentEditable = 'true';
+    textEl.focus();
+    const range = document.createRange();
+    range.selectNodeContents(textEl);
+    range.collapse(false);
+    const sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+
+    const finish = () => {
+      textEl.contentEditable = 'false';
+      textEl.removeEventListener('blur', finish);
+      textEl.removeEventListener('keydown', keyHandler);
+      const newText = textEl.textContent.trim();
+      const item = state[currentList].find(i => i.id === id);
+      if (!item) return;
+      if (!newText) {
+        deleteItem(id);
+      } else if (newText !== item.text) {
+        item.text = newText;
+        item.updatedAt = Date.now();
+        saveState();
+      } else {
+        textEl.textContent = item.text;
+      }
+    };
+    const keyHandler = (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        textEl.blur();
+      } else if (e.key === 'Escape') {
+        e.preventDefault();
+        const item = state[currentList].find(i => i.id === id);
+        if (item) textEl.textContent = item.text;
+        textEl.blur();
+      }
+    };
+    textEl.addEventListener('blur', finish);
+    textEl.addEventListener('keydown', keyHandler);
+  }
+
+  function addItem() {
+    const input = document.getElementById('add-input');
+    const text = input.value.trim();
+    if (!text || !currentList) return;
+    state[currentList].push({
+      id: uid(),
+      text: text,
+      done: false,
+      createdAt: Date.now(),
+      updatedAt: Date.now()
+    });
+    saveState();
+    input.value = '';
+    renderItems();
+  }
+
+  function toggleItem(id) {
+    const item = state[currentList].find(i => i.id === id);
+    if (!item) return;
+    item.done = !item.done;
+    item.updatedAt = Date.now();
+    saveState();
+    renderItems();
+  }
+
+  function deleteItem(id) {
+    state[currentList] = state[currentList].filter(i => i.id !== id);
+    saveState();
+    renderItems();
+  }
+
+  function clearCompleted() {
+    if (!currentList) return;
+    const before = state[currentList].length;
+    state[currentList] = state[currentList].filter(i => !i.done);
+    const removed = before - state[currentList].length;
+    if (removed === 0) { toast('Nothing to clear'); return; }
+    saveState();
+    renderItems();
+    toast(`Cleared ${removed} item${removed === 1 ? '' : 's'}`);
+  }
+
+  function openExport() {
+    const payload = JSON.stringify({
+      app: 'notes-app', version: 1,
+      exportedAt: new Date().toISOString(),
+      data: state
+    }, null, 2);
+    document.getElementById('export-text').value = payload;
+    document.getElementById('export-modal').classList.add('active');
+  }
+
+  function copyExport() {
+    const ta = document.getElementById('export-text');
+    ta.select();
+    try {
+      navigator.clipboard.writeText(ta.value)
+        .then(() => toast('Copied to clipboard'))
+        .catch(() => { document.execCommand('copy'); toast('Copied'); });
+    } catch (e) {
+      document.execCommand('copy');
+      toast('Copied');
+    }
+  }
+
+  function openImport() {
+    document.getElementById('import-text').value = '';
+    document.getElementById('import-modal').classList.add('active');
+  }
+
+  function closeModal(id) {
+    document.getElementById(id).classList.remove('active');
+  }
+
+  function doImport(replace) {
+    const raw = document.getElementById('import-text').value.trim();
+    if (!raw) { toast('Paste exported text first'); return; }
+    let parsed;
+    try { parsed = JSON.parse(raw); }
+    catch (e) { toast('Invalid format'); return; }
+    const incoming = (parsed && parsed.data) ? parsed.data : parsed;
+    if (!incoming || typeof incoming !== 'object') {
+      toast('Invalid data'); return;
+    }
+
+    if (replace) {
+      const next = { remember: [], buy: [], projects: [] };
+      for (const k of Object.keys(LISTS)) {
+        if (Array.isArray(incoming[k])) next[k] = incoming[k];
+      }
+      state = next;
+    } else {
+      for (const k of Object.keys(LISTS)) {
+        if (!Array.isArray(incoming[k])) continue;
+        const existingIds = new Set(state[k].map(i => i.id));
+        for (const item of incoming[k]) {
+          if (!item || typeof item.text !== 'string') continue;
+          if (item.id && existingIds.has(item.id)) continue;
+          state[k].push({
+            id: item.id || uid(),
+            text: item.text,
+            done: !!item.done,
+            createdAt: item.createdAt || Date.now(),
+            updatedAt: item.updatedAt || Date.now()
+          });
+        }
+      }
+    }
+    saveState();
+    closeModal('import-modal');
+    if (currentList) renderItems();
+    updateCounts();
+    toast(replace ? 'Replaced all notes' : 'Merged notes');
+  }
+
+  let toastTimer;
+  function toast(msg) {
+    const el = document.getElementById('toast');
+    el.textContent = msg;
+    el.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => el.classList.remove('show'), 2000);
+  }
+
+  document.querySelectorAll('.modal-backdrop').forEach(m => {
+    m.addEventListener('click', (e) => {
+      if (e.target === m) m.classList.remove('active');
+    });
+  });
+
+  updateCounts();
+
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  }
+</script>
+</body>
+</html>
