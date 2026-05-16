@@ -1,0 +1,56 @@
+services:
+  firefly_iii_core:
+    image: fireflyiii/core:latest
+    container_name: firefly_iii_core
+    restart: always
+    volumes:
+      - firefly_iii_upload:/var/www/html/storage/upload
+    env_file:
+      - .env
+    ports:
+      - "8080:8080"
+    depends_on:
+      - firefly_iii_db
+
+  firefly_iii_db:
+    image: mariadb:lts
+    container_name: firefly_iii_db
+    restart: always
+    environment:
+      MYSQL_RANDOM_ROOT_PASSWORD: "yes"
+      MYSQL_USER: firefly
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: firefly
+    volumes:
+      - firefly_iii_db:/var/lib/mysql
+
+  firefly_iii_importer:
+    image: fireflyiii/data-importer:latest
+    container_name: firefly_iii_importer
+    restart: always
+    ports:
+      - "8081:8080"
+    depends_on:
+      - firefly_iii_core
+    environment:
+      FIREFLY_III_URL: http://firefly_iii_core:8080
+      VANITY_URL: http://localhost:8080
+      FIREFLY_III_ACCESS_TOKEN: ${FIREFLY_III_ACCESS_TOKEN}
+      TRUSTED_PROXIES: "**"
+      # Pick ONE of: nordigen | spectre | simplefin
+      # nordigen = GoCardless (EU/UK). simplefin = U.S. banks/CCs (~$15/yr).
+      NORDIGEN_ID: ${NORDIGEN_ID:-}
+      NORDIGEN_KEY: ${NORDIGEN_KEY:-}
+      SIMPLEFIN_TOKEN: ${SIMPLEFIN_TOKEN:-}
+
+  firefly_iii_cron:
+    image: alpine
+    container_name: firefly_iii_cron
+    restart: always
+    command: sh -c "
+      echo \"0 3 * * * wget -qO- http://firefly_iii_core:8080/api/v1/cron/${CRON_TOKEN}\" | crontab -
+      && crond -f -L /dev/stdout"
+
+volumes:
+  firefly_iii_upload:
+  firefly_iii_db:
