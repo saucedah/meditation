@@ -1,11 +1,12 @@
 # Firefly III + Data Importer — Home Setup
 
-Self-hosted personal finance manager with seamless bank / credit card sync.
+Self-hosted personal finance manager with seamless **bank account** sync.
+No credit cards — Ramsey-style.
 
 ## What this gives you
 
 - **Firefly III** on http://localhost:8080 — budgets, bills, accounts, reports.
-- **Data Importer** on http://localhost:8081 — pulls transactions from your bank / credit cards.
+- **Data Importer** on http://localhost:8081 — pulls transactions from your checking / savings accounts.
 - **MariaDB** for storage, **cron** for recurring transactions & reminders.
 
 ## One-time setup
@@ -25,22 +26,23 @@ Self-hosted personal finance manager with seamless bank / credit card sync.
    ```bash
    docker compose up -d
    ```
-4. Open http://localhost:8080, register your account (first user is admin), and create your asset accounts (checking, savings, each credit card).
+4. Open http://localhost:8080, register your account (first user is admin), and create your asset accounts — **checking and savings only**. Do not add credit-card accounts (Ramsey rule: cash, debit, or cut up).
 5. In Firefly UI → **Options → Profile → OAuth → Personal Access Tokens**, create a token.
    Paste it into `.env` as `FIREFLY_III_ACCESS_TOKEN`, then restart the importer:
    ```bash
    docker compose restart firefly_iii_importer
    ```
 
-## Connecting your bank + credit cards
+## Connecting your bank account(s)
 
-The data importer supports three providers. Pick the one for your region:
+The data importer supports three providers. Pick the one for your region.
+**Only link checking and savings — skip credit cards on purpose.**
 
 ### U.S. — use SimpleFIN  *(recommended for U.S. users)*
-- ~$15/year. Works with Chase, BofA, Capital One, Citi, Discover, Amex, most banks + credit cards.
+- ~$15/year. Works with Chase, BofA, Wells Fargo, Capital One, USAA, Ally, most U.S. banks + credit unions.
 - Sign up: https://beta.bridge.simplefin.org/
 - Generate a Setup Token, paste it into `.env` as `SIMPLEFIN_TOKEN`.
-- In the importer (http://localhost:8081), choose **SimpleFIN**, map accounts to your Firefly accounts, save the config as a JSON file, and re-run it later to fetch new transactions.
+- In the importer (http://localhost:8081), choose **SimpleFIN**, map **only your checking/savings accounts** to your Firefly accounts (leave any credit-card accounts unmapped), save the config as a JSON file, and re-run it later to fetch new transactions.
 
 ### EU / UK — use GoCardless (Nordigen)
 - Free.
