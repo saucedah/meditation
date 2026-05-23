@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0d0d12">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/svg+xml" href="icon.svg">
+<title>Claude Ninja Dojo</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark">🥷</span>
+      <div>
+        <h1>Claude Ninja Dojo</h1>
+        <p class="tagline">Sharpen your Claude Code skills, one scroll at a time.</p>
+      </div>
+    </div>
+    <div class="belt-display" id="beltDisplay" title="Your current belt">
+      <span class="belt-band" id="beltBand"></span>
+      <span class="belt-name" id="beltName">White Belt</span>
+      <span class="belt-points" id="beltPoints">0 XP</span>
+    </div>
+  </header>
+
+  <nav class="tabs" role="tablist">
+    <button class="tab active" data-tab="dashboard" role="tab">Dashboard</button>
+    <button class="tab" data-tab="lessons" role="tab">Lessons</button>
+    <button class="tab" data-tab="quiz" role="tab">Quiz</button>
+    <button class="tab" data-tab="cheatsheet" role="tab">Cheatsheet</button>
+  </nav>
+
+  <main>
+    <!-- Dashboard -->
+    <section class="panel active" id="panel-dashboard">
+      <div class="hero">
+        <div class="progress-ring" id="progressRing">
+          <svg viewBox="0 0 120 120">
+            <circle class="ring-bg" cx="60" cy="60" r="52"></circle>
+            <circle class="ring-fg" cx="60" cy="60" r="52" id="ringFg"></circle>
+          </svg>
+          <div class="ring-center">
+            <span class="ring-pct" id="ringPct">0%</span>
+            <span class="ring-label">to next belt</span>
+          </div>
+        </div>
+        <div class="hero-text">
+          <h2 id="heroBelt">White Belt</h2>
+          <p id="heroMsg">Welcome to the dojo. Begin with any lesson — every scroll completed earns XP toward the next belt.</p>
+          <div class="hero-stats">
+            <div class="stat"><span class="stat-num" id="statLessons">0</span><span class="stat-lbl">Lessons</span></div>
+            <div class="stat"><span class="stat-num" id="statQuizzes">0</span><span class="stat-lbl">Quizzes Aced</span></div>
+            <div class="stat"><span class="stat-num" id="statXp">0</span><span class="stat-lbl">XP</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="belt-ladder" id="beltLadder"></div>
+    </section>
+
+    <!-- Lessons -->
+    <section class="panel" id="panel-lessons">
+      <h2 class="panel-title">Scrolls of the Dojo</h2>
+      <p class="panel-sub">Pick a topic. Read it, take the quiz, earn XP.</p>
+      <div class="lesson-grid" id="lessonGrid"></div>
+    </section>
+
+    <!-- Quiz -->
+    <section class="panel" id="panel-quiz">
+      <div id="quizHome">
+        <h2 class="panel-title">Test Your Skills</h2>
+        <p class="panel-sub">Each quiz is 4 questions. +5 XP per correct, +25 bonus for a perfect run.</p>
+        <div class="lesson-grid" id="quizGrid"></div>
+      </div>
+      <div id="quizRunner" class="hidden">
+        <button class="back-btn" id="quizBack">← Back to quizzes</button>
+        <div class="quiz-card">
+          <div class="quiz-meta">
+            <span id="quizTopic"></span>
+            <span id="quizCount"></span>
+          </div>
+          <h3 id="quizQuestion"></h3>
+          <div class="quiz-options" id="quizOptions"></div>
+          <div class="quiz-explain hidden" id="quizExplain"></div>
+          <div class="quiz-actions">
+            <button class="primary hidden" id="quizNext">Next →</button>
+          </div>
+        </div>
+      </div>
+      <div id="quizResult" class="hidden">
+        <div class="quiz-card result">
+          <h2 id="resultTitle"></h2>
+          <p id="resultScore"></p>
+          <p id="resultXp" class="xp-pill"></p>
+          <div class="quiz-actions">
+            <button class="primary" id="resultRetry">Try Again</button>
+            <button class="ghost" id="resultBack">Back to Quizzes</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Cheatsheet -->
+    <section class="panel" id="panel-cheatsheet">
+      <h2 class="panel-title">Quick Reference</h2>
+      <p class="panel-sub">Grep-able snippets for the things you forget mid-task.</p>
+      <div class="cheat-grid">
+        <div class="cheat-card">
+          <h3>⚡ Slash commands</h3>
+          <ul>
+            <li><code>/help</code> — get help</li>
+            <li><code>/clear</code> — reset the conversation</li>
+            <li><code>/config</code> — open settings UI</li>
+            <li><code>/agents</code> — list subagents</li>
+            <li><code>/init</code> — generate CLAUDE.md</li>
+            <li><code>/review</code> — review a PR</li>
+            <li><code>/security-review</code> — audit current diff</li>
+            <li><code>/verify</code> — run app to confirm a fix</li>
+          </ul>
+        </div>
+        <div class="cheat-card">
+          <h3>🪝 Hook events</h3>
+          <ul>
+            <li><code>SessionStart</code> — once per session</li>
+            <li><code>UserPromptSubmit</code> — every user message</li>
+            <li><code>PreToolUse</code> / <code>PostToolUse</code> — around tools</li>
+            <li><code>Stop</code> — turn ends</li>
+            <li><code>Notification</code> — idle</li>
+          </ul>
+        </div>
+        <div class="cheat-card">
+          <h3>🛡️ Permissions</h3>
+          <ul>
+            <li><code>Bash(npm:*)</code> — allow any npm command</li>
+            <li><code>Read(./src/**)</code> — allow reads under src</li>
+            <li>Modes: <code>default</code>, <code>acceptEdits</code>, <code>bypassPermissions</code></li>
+            <li>Settings: user → project → local (merge order)</li>
+          </ul>
+        </div>
+        <div class="cheat-card">
+          <h3>🛠️ Tool picks</h3>
+          <ul>
+            <li>View file → <code>Read</code> (not <code>cat</code>)</li>
+            <li>Edit file → <code>Edit</code> (not <code>sed</code>)</li>
+            <li>Create file → <code>Write</code> (not <code>echo &gt;</code>)</li>
+            <li>Long task → Bash <code>run_in_background</code></li>
+            <li>Independent calls → one message, multiple blocks</li>
+          </ul>
+        </div>
+        <div class="cheat-card">
+          <h3>🥷 Subagents</h3>
+          <ul>
+            <li><code>Explore</code> — read-only code search</li>
+            <li><code>Plan</code> — architecture planning</li>
+            <li><code>code-review</code> — second opinion on a diff</li>
+            <li><code>general-purpose</code> — catch-all</li>
+            <li>Prompt must be self-contained — no memory of parent</li>
+          </ul>
+        </div>
+        <div class="cheat-card">
+          <h3>🌳 Git rules</h3>
+          <ul>
+            <li>Never amend after pre-commit fails → new commit</li>
+            <li>Stage by name; avoid <code>git add -A</code></li>
+            <li>Inspect: <code>status</code> + <code>diff</code> + <code>log</code> in parallel</li>
+            <li>PR body via HEREDOC for formatting</li>
+          </ul>
+        </div>
+      </div>
+      <div class="danger-zone">
+        <button class="ghost danger" id="resetProgress">Reset all progress</button>
+      </div>
+    </section>
+  </main>
+
+  <!-- Lesson modal -->
+  <div class="modal-backdrop hidden" id="modalBackdrop">
+    <div class="modal" role="dialog" aria-modal="true">
+      <button class="modal-close" id="modalClose" aria-label="Close">×</button>
+      <div class="modal-body" id="modalBody"></div>
+      <div class="modal-footer">
+        <button class="primary" id="modalDone">Mark as Studied (+10 XP)</button>
+        <button class="ghost" id="modalQuiz">Take the Quiz →</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="content.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
