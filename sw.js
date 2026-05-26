@@ -1,5 +1,5 @@
-const SHELL_CACHE = 'meditate-shell-v5';
-const AUDIO_CACHE = 'meditate-audio-v1';
+const SHELL_CACHE = 'meditate-shell-v6';
+const AUDIO_CACHE = 'meditate-audio-v2';
 const SHELL_ASSETS = ['./', './index.html', './manifest.json', './icon.svg'];
 
 self.addEventListener('install', e => {

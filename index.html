@@ -1217,7 +1217,7 @@ function seekFromEvent(ev) {
 progressBar.addEventListener('click', seekFromEvent);
 
 // ───── OFFLINE DOWNLOADS ─────
-const AUDIO_CACHE_NAME = 'meditate-audio-v1';
+const AUDIO_CACHE_NAME = 'meditate-audio-v2';
 const dlState = new Map(); // sessionId → 'cached' | { progress: 0..1 } | undefined
 
 async function refreshDownloadStates() {
