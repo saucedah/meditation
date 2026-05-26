@@ -1,362 +1,877 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Meditate">
+<meta name="theme-color" content="#0a0a1a">
 <link rel="apple-touch-icon" href="icon.png">
 <link rel="manifest" href="manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600&family=Raleway:wght@300;400;500;600&display=swap" rel="stylesheet">
 <title>Meditate</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   :root {
     --bg: #0a0a1a;
-    --card-bg: rgba(255,255,255,0.06);
-    --card-border: rgba(255,255,255,0.1);
-    --text: #e8e0f0;
-    --text-dim: #8a80a0;
+    --bg-soft: #11112a;
+    --card-bg: rgba(255,255,255,0.05);
+    --card-bg-hover: rgba(255,255,255,0.09);
+    --card-border: rgba(255,255,255,0.08);
+    --text: #ebe4f3;
+    --text-dim: #9b91b0;
+    --text-faint: #5d5872;
     --accent: #b388ff;
-    --accent-glow: rgba(179,136,255,0.3);
+    --accent-soft: rgba(179,136,255,0.18);
+    --accent-glow: rgba(179,136,255,0.35);
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+
+    /* category accent colors */
+    --c-cleansing: #b388ff;
+    --c-breath: #82e9ff;
+    --c-frequency: #ffb86b;
+    --c-ra: #ff80c0;
+    --c-extracts: #7eecc0;
   }
 
+  html { -webkit-text-size-adjust: 100%; }
   body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    font-family: 'Raleway', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
     background: var(--bg);
     color: var(--text);
     min-height: 100vh;
     min-height: 100dvh;
     overflow-x: hidden;
     -webkit-tap-highlight-color: transparent;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
   }
 
-  .screen { display: none; min-height: 100vh; min-height: 100dvh; padding: 20px; padding-top: env(safe-area-inset-top, 20px); }
-  .screen.active { display: flex; flex-direction: column; }
-
+  /* Animated background glows */
   .bg-glow {
-    position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 0; pointer-events: none;
-    background: radial-gradient(ellipse at 50% 30%, rgba(90,50,150,0.15) 0%, transparent 70%);
+    position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background:
+      radial-gradient(ellipse 60% 50% at 50% 0%, rgba(110,70,180,0.22) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 40% at 100% 80%, rgba(60,40,120,0.18) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 30% at 0% 90%, rgba(80,50,150,0.15) 0%, transparent 60%);
   }
 
-  .screen > * { position: relative; z-index: 1; }
-
-  /* Home Screen */
-  .home-header { text-align: center; padding: 60px 0 40px; }
-  .home-header h1 { font-size: 32px; font-weight: 300; letter-spacing: 4px; text-transform: uppercase; }
-  .home-header p { color: var(--text-dim); margin-top: 8px; font-size: 14px; letter-spacing: 2px; }
-  .lotus { font-size: 60px; margin-bottom: 16px; display: block; }
-
-  .home-cards { display: flex; flex-direction: column; gap: 20px; max-width: 400px; margin: 0 auto; width: 100%; }
-  .home-card {
-    background: var(--card-bg); border: 1px solid var(--card-border);
-    border-radius: 20px; padding: 32px 24px; text-align: center;
-    cursor: pointer; transition: all 0.3s ease;
-    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  .screen {
+    display: none;
+    min-height: 100vh; min-height: 100dvh;
+    position: relative; z-index: 1;
   }
-  .home-card:active { transform: scale(0.97); background: rgba(255,255,255,0.1); }
-  .home-card .icon { font-size: 48px; margin-bottom: 12px; display: block; }
-  .home-card h2 { font-size: 22px; font-weight: 400; letter-spacing: 2px; }
-  .home-card p { color: var(--text-dim); font-size: 13px; margin-top: 6px; }
+  .screen.active { display: block; }
 
-  /* List Header */
-  .list-header {
-    display: flex; align-items: center; padding: 20px 0 24px; gap: 16px;
+  /* ───── HOME ───── */
+  .home {
+    padding: calc(var(--safe-top) + 24px) 20px calc(var(--safe-bottom) + 60px);
+    max-width: 720px; margin: 0 auto;
   }
-  .back-btn {
-    background: var(--card-bg); border: 1px solid var(--card-border);
-    border-radius: 12px; width: 44px; height: 44px; display: flex;
-    align-items: center; justify-content: center; cursor: pointer;
-    color: var(--text); font-size: 20px; flex-shrink: 0;
-    transition: background 0.2s;
-  }
-  .back-btn:active { background: rgba(255,255,255,0.15); }
-  .list-header h1 { font-size: 24px; font-weight: 300; letter-spacing: 2px; }
 
-  /* Player Screen */
-  .player { align-items: center; justify-content: center; text-align: center; }
-  .player-visual {
-    width: 220px; height: 220px; border-radius: 50%; margin: 0 auto 32px;
-    display: flex; align-items: center; justify-content: center; flex-direction: column;
+  .home-header {
+    text-align: center;
+    padding: 28px 0 20px;
+  }
+  .lotus {
+    font-size: 56px; display: inline-block;
+    filter: drop-shadow(0 4px 20px var(--accent-glow));
+    animation: float 6s ease-in-out infinite;
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+  }
+  .home-header h1 {
+    font-family: 'Lora', serif;
+    font-size: 30px; font-weight: 500; letter-spacing: 6px;
+    text-transform: uppercase;
+    margin-top: 8px;
+    background: linear-gradient(135deg, #ebe4f3 0%, #b388ff 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .home-header p {
+    color: var(--text-dim); margin-top: 6px;
+    font-size: 13px; letter-spacing: 3px; text-transform: uppercase;
+  }
+
+  /* Search */
+  .search-bar {
     position: relative;
+    margin: 20px 0 28px;
+  }
+  .search-bar input {
+    width: 100%;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 14px;
+    padding: 14px 18px 14px 46px;
+    color: var(--text);
+    font-family: inherit; font-size: 15px;
+    outline: none;
+    transition: border-color 0.2s, background 0.2s;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+  .search-bar input::placeholder { color: var(--text-faint); }
+  .search-bar input:focus {
+    border-color: var(--accent);
+    background: var(--card-bg-hover);
+  }
+  .search-bar svg {
+    position: absolute; left: 16px; top: 50%;
+    transform: translateY(-50%);
+    width: 18px; height: 18px;
+    color: var(--text-faint);
+    pointer-events: none;
+  }
+  .search-clear {
+    position: absolute; right: 8px; top: 50%;
+    transform: translateY(-50%);
+    width: 32px; height: 32px;
+    display: none;
+    align-items: center; justify-content: center;
+    color: var(--text-faint);
+    cursor: pointer; border-radius: 8px;
+    border: none; background: transparent;
+  }
+  .search-clear:hover { color: var(--text); background: var(--card-bg); }
+  .search-bar.has-value .search-clear { display: flex; }
+
+  /* Categories */
+  .category {
+    margin-bottom: 32px;
+  }
+  .category-header {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 14px; padding: 0 4px;
+  }
+  .category-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--cat-color, var(--accent));
+    box-shadow: 0 0 12px var(--cat-color, var(--accent));
+  }
+  .category-title {
+    font-family: 'Lora', serif;
+    font-size: 13px; font-weight: 500;
+    letter-spacing: 4px; text-transform: uppercase;
+    color: var(--text-dim);
+  }
+  .category-count {
+    color: var(--text-faint); font-size: 12px;
+    margin-left: auto;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .cards { display: grid; grid-template-columns: 1fr; gap: 12px; }
+  @media (min-width: 540px) { .cards { grid-template-columns: 1fr 1fr; } }
+
+  .card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 18px;
+    padding: 18px 18px 16px;
+    cursor: pointer;
+    transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    display: flex; align-items: center; gap: 14px;
+    min-height: 76px;
+    text-align: left;
+    -webkit-user-select: none; user-select: none;
+  }
+  .card:hover { background: var(--card-bg-hover); border-color: rgba(255,255,255,0.14); }
+  .card:active { transform: scale(0.98); }
+  .card:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  .card-icon {
+    width: 52px; height: 52px; border-radius: 14px;
+    background: linear-gradient(135deg, var(--cat-color, var(--accent)) 0%, rgba(255,255,255,0.05) 100%);
+    background-blend-mode: overlay;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px;
+    flex-shrink: 0;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.12);
+  }
+  .card-icon.cat-cleansing { background: linear-gradient(135deg, rgba(179,136,255,0.4), rgba(179,136,255,0.08)); }
+  .card-icon.cat-breath    { background: linear-gradient(135deg, rgba(130,233,255,0.4), rgba(130,233,255,0.08)); }
+  .card-icon.cat-frequency { background: linear-gradient(135deg, rgba(255,184,107,0.4), rgba(255,184,107,0.08)); }
+  .card-icon.cat-ra        { background: linear-gradient(135deg, rgba(255,128,192,0.4), rgba(255,128,192,0.08)); }
+  .card-icon.cat-extracts  { background: linear-gradient(135deg, rgba(126,236,192,0.4), rgba(126,236,192,0.08)); }
+
+  .card-body { flex: 1; min-width: 0; }
+  .card-title {
+    font-family: 'Lora', serif;
+    font-size: 17px; font-weight: 500;
+    color: var(--text);
+    margin-bottom: 3px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+  .card-desc {
+    font-size: 12.5px;
+    color: var(--text-dim);
+    line-height: 1.45;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+  .card-meta {
+    font-size: 11px; color: var(--text-faint);
+    margin-top: 5px;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.5px;
+  }
+
+  .empty-state {
+    text-align: center; padding: 40px 20px;
+    color: var(--text-dim);
+  }
+  .empty-state .em { font-size: 36px; display: block; margin-bottom: 8px; opacity: 0.6; }
+
+  /* ───── PLAYER ───── */
+  .player {
+    padding: calc(var(--safe-top) + 16px) 20px calc(var(--safe-bottom) + 30px);
+    display: flex; flex-direction: column; align-items: center;
+    min-height: 100dvh;
+  }
+
+  .player-topbar {
+    align-self: stretch;
+    display: flex; align-items: center;
+    margin-bottom: 8px;
+  }
+
+  .icon-btn {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    width: 44px; height: 44px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; color: var(--text);
+    transition: background 0.2s;
+    flex-shrink: 0;
+  }
+  .icon-btn:hover { background: var(--card-bg-hover); }
+  .icon-btn:active { transform: scale(0.94); }
+  .icon-btn svg { width: 20px; height: 20px; }
+
+  .player-content {
+    width: 100%;
+    max-width: 480px;
+    margin: 0 auto;
+    display: flex; flex-direction: column; align-items: center;
+    flex: 1;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .player-visual {
+    width: 240px; height: 240px;
+    margin: 32px auto 28px;
+    position: relative;
+    display: flex; align-items: center; justify-content: center;
   }
   .player-ring {
     position: absolute; inset: 0; border-radius: 50%;
-    border: 2px solid rgba(179,136,255,0.2);
+    border: 2px solid var(--accent-soft);
   }
-  .player-ring.pulse {
-    animation: pulse 4s ease-in-out infinite;
-  }
+  .player-ring.pulse { animation: pulse 4.5s ease-in-out infinite; }
+  .player-ring:nth-child(2) { animation-delay: -1.5s; }
+  .player-ring:nth-child(3) { animation-delay: -3s; }
   @keyframes pulse {
-    0%, 100% { transform: scale(1); opacity: 0.3; }
-    50% { transform: scale(1.15); opacity: 0.8; }
+    0%, 100% { transform: scale(0.92); opacity: 0.25; }
+    50%      { transform: scale(1.15); opacity: 0.7; }
   }
-  .player-ring:nth-child(2) { animation-delay: -1.3s; }
-  .player-ring:nth-child(3) { animation-delay: -2.6s; }
+  .player-emoji {
+    font-size: 88px; position: relative; z-index: 1;
+    filter: drop-shadow(0 4px 24px var(--accent-glow));
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .player-ring.pulse { animation: none; opacity: 0.4; }
+    .lotus { animation: none; }
+  }
 
-  .player-emoji { font-size: 64px; position: relative; z-index: 1; }
+  .player-title {
+    font-family: 'Lora', serif;
+    font-size: 22px; font-weight: 500;
+    margin: 0 8px 4px;
+    line-height: 1.25;
+  }
+  .player-subtitle {
+    color: var(--text-dim); font-size: 13px;
+    line-height: 1.5; max-width: 340px;
+    padding: 0 8px;
+  }
 
-  .player-title { font-size: 22px; font-weight: 300; letter-spacing: 2px; margin-bottom: 4px; padding: 0 10px; }
-  .player-subtitle { color: var(--text-dim); font-size: 13px; margin-bottom: 40px; }
+  /* Progress */
+  .progress-row {
+    align-self: stretch;
+    margin: 36px 0 8px;
+  }
+  .progress-bar {
+    position: relative;
+    height: 4px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 2px;
+    overflow: hidden;
+    cursor: pointer;
+  }
+  .progress-fill {
+    position: absolute; left: 0; top: 0; bottom: 0;
+    background: linear-gradient(90deg, var(--accent) 0%, #d6b3ff 100%);
+    width: 0%;
+    border-radius: 2px;
+    transition: width 0.2s linear;
+  }
+  .progress-thumb {
+    position: absolute; top: 50%;
+    width: 14px; height: 14px;
+    background: var(--accent);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 2px 12px var(--accent-glow);
+    opacity: 0;
+    transition: opacity 0.2s;
+    left: 0%;
+  }
+  .progress-row:hover .progress-thumb,
+  .progress-row.active .progress-thumb { opacity: 1; }
 
-  .timer { font-size: 56px; font-weight: 200; letter-spacing: 4px; margin-bottom: 40px; font-variant-numeric: tabular-nums; }
+  .progress-times {
+    display: flex; justify-content: space-between;
+    font-variant-numeric: tabular-nums;
+    font-size: 12px; color: var(--text-faint);
+    margin-top: 8px;
+    letter-spacing: 0.5px;
+  }
 
-  .controls { display: flex; gap: 24px; align-items: center; justify-content: center; margin-bottom: 24px; }
-  .ctrl-btn {
-    background: var(--card-bg); border: 1px solid var(--card-border);
-    border-radius: 50%; width: 64px; height: 64px;
+  /* Controls */
+  .controls {
+    display: flex; gap: 20px;
+    align-items: center; justify-content: center;
+    margin: 18px 0 24px;
+  }
+  .ctrl {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 50%;
+    width: 58px; height: 58px;
     display: flex; align-items: center; justify-content: center;
-    cursor: pointer; font-size: 28px; color: var(--text);
-    transition: all 0.2s;
+    cursor: pointer; color: var(--text);
+    transition: background 0.2s, transform 0.1s;
   }
-  .ctrl-btn:active { transform: scale(0.9); }
-  .ctrl-btn.play {
-    width: 80px; height: 80px; font-size: 32px;
-    background: linear-gradient(135deg, rgba(179,136,255,0.3), rgba(120,80,200,0.3));
+  .ctrl:hover { background: var(--card-bg-hover); }
+  .ctrl:active { transform: scale(0.92); }
+  .ctrl.play {
+    width: 76px; height: 76px;
+    background: linear-gradient(135deg, var(--accent) 0%, #8b66e0 100%);
+    border: none;
+    color: white;
+    box-shadow: 0 4px 24px var(--accent-glow);
+  }
+  .ctrl svg { width: 22px; height: 22px; }
+  .ctrl.play svg { width: 28px; height: 28px; }
+
+  /* Lower toolbar (volume / loop) */
+  .player-toolbar {
+    align-self: stretch;
+    display: flex; flex-direction: column; gap: 14px;
+    margin-top: 12px;
+  }
+  .toolbar-row {
+    display: flex; align-items: center; gap: 12px;
+  }
+  .toolbar-row svg { width: 18px; height: 18px; color: var(--text-dim); flex-shrink: 0; }
+
+  input[type=range].vol {
+    -webkit-appearance: none; appearance: none;
+    flex: 1; height: 4px; border-radius: 2px;
+    background: rgba(255,255,255,0.1);
+    outline: none;
+  }
+  input[type=range].vol::-webkit-slider-thumb {
+    -webkit-appearance: none; appearance: none;
+    width: 18px; height: 18px; border-radius: 50%;
+    background: var(--accent); cursor: pointer;
+    box-shadow: 0 0 0 4px rgba(179,136,255,0.15);
+  }
+  input[type=range].vol::-moz-range-thumb {
+    width: 18px; height: 18px; border-radius: 50%;
+    background: var(--accent); cursor: pointer; border: none;
+  }
+
+  .toggle-pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--card-bg); border: 1px solid var(--card-border);
+    color: var(--text-dim);
+    padding: 8px 14px; border-radius: 999px;
+    cursor: pointer; font-size: 12px; font-weight: 500;
+    letter-spacing: 1px; text-transform: uppercase;
+    transition: all 0.2s;
+    min-height: 36px;
+    -webkit-user-select: none; user-select: none;
+  }
+  .toggle-pill.active {
+    background: var(--accent-soft);
+    color: var(--accent);
     border-color: rgba(179,136,255,0.4);
   }
+  .toggle-pill svg { width: 14px; height: 14px; }
 
-  .player-back {
-    position: absolute; top: 20px; left: 20px;
-    top: calc(env(safe-area-inset-top, 20px) + 10px);
+  .pill-row {
+    display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;
   }
 
-  /* Volume */
-  .volume-row {
-    display: flex; align-items: center; gap: 12px; justify-content: center;
-    margin-bottom: 20px; color: var(--text-dim);
+  .loading {
+    color: var(--text-dim); font-size: 12px;
+    margin-top: 8px; min-height: 16px;
+    text-align: center;
   }
-  .volume-row input[type=range] {
-    -webkit-appearance: none; appearance: none;
-    width: 140px; height: 4px; border-radius: 2px;
-    background: rgba(255,255,255,0.15); outline: none;
-  }
-  .volume-row input[type=range]::-webkit-slider-thumb {
-    -webkit-appearance: none; appearance: none;
-    width: 20px; height: 20px; border-radius: 50%;
-    background: var(--accent); cursor: pointer;
-  }
-
-  /* Loading */
-  .loading { color: var(--text-dim); font-size: 14px; margin-top: 8px; }
-
-  .med-spiritual { background: rgba(156,39,176,0.2); color: #9c27b0; }
-  .med-quantum { background: rgba(100,149,237,0.2); color: #6495ed; }
 </style>
 </head>
 <body>
 <div class="bg-glow"></div>
 
-<!-- HOME SCREEN -->
+<!-- HOME -->
 <div id="home" class="screen active">
-  <div class="home-header">
-    <span class="lotus">🪷</span>
-    <h1>Meditate</h1>
-    <p>Find your inner peace</p>
-  </div>
-  <div class="home-cards">
-    <div class="home-card" onclick="selectSession('limpieza')">
-      <span class="icon">✨</span>
-      <h2>Limpieza Energetica</h2>
-      <p>Mantras y canticos de elevacion espiritual</p>
+  <div class="home">
+    <div class="home-header">
+      <span class="lotus" aria-hidden="true">🪷</span>
+      <h1>Meditate</h1>
+      <p>Find your inner peace</p>
     </div>
-    <div class="home-card" onclick="selectSession('cuantica')">
-      <span class="icon">🧘</span>
-      <h2>Meditacion Cuantica</h2>
-      <p>Viaje al interior con Metodo Wim Hof</p>
+
+    <div class="search-bar" id="search-bar">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+      <input type="search" id="search" placeholder="Buscar meditación…" autocomplete="off" aria-label="Buscar meditación">
+      <button class="search-clear" id="search-clear" aria-label="Limpiar búsqueda">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
     </div>
-    <div class="home-card" onclick="selectSession('thirdEye')">
-      <span class="icon">👁️</span>
-      <h2>Third Eye</h2>
-      <p>963 + 852 + 639 Hz · pineal & heart chakra</p>
-    </div>
-    <div class="home-card" onclick="selectSession('oneness')">
-      <span class="icon">🕉️</span>
-      <h2>Oneness</h2>
-      <p>963 Hz · return to source</p>
-    </div>
-    <div class="home-card" onclick="selectSession('positive')">
-      <span class="icon">🌟</span>
-      <h2>Positive Energy</h2>
-      <p>Attract peace, abundance, success</p>
-    </div>
-    <div class="home-card" onclick="selectSession('angels')">
-      <span class="icon">😇</span>
-      <h2>Angels & Archangels</h2>
-      <p>432 Hz · body, soul & spirit healing</p>
+
+    <div id="categories-host"></div>
+
+    <div id="empty-state" class="empty-state" style="display:none;">
+      <span class="em">🌙</span>
+      <p>Nada por aquí. Prueba otra búsqueda.</p>
     </div>
   </div>
 </div>
 
 <!-- PLAYER -->
-<div id="player" class="screen player">
-  <div class="back-btn player-back" onclick="stopAndBack()">&#8592;</div>
-  <div class="player-visual">
-    <div class="player-ring pulse"></div>
-    <div class="player-ring pulse"></div>
-    <div class="player-ring pulse"></div>
-    <span class="player-emoji" id="p-emoji"></span>
+<div id="player" class="screen">
+  <div class="player">
+    <div class="player-topbar">
+      <button class="icon-btn" onclick="stopAndBack()" aria-label="Volver">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="player-content">
+      <div class="player-visual" aria-hidden="true">
+        <div class="player-ring pulse"></div>
+        <div class="player-ring pulse"></div>
+        <div class="player-ring pulse"></div>
+        <span class="player-emoji" id="p-emoji">🧘</span>
+      </div>
+
+      <h2 class="player-title" id="p-title">—</h2>
+      <p class="player-subtitle" id="p-sub">—</p>
+
+      <div class="progress-row" id="progress-row">
+        <div class="progress-bar" id="progress-bar">
+          <div class="progress-fill" id="progress-fill"></div>
+          <div class="progress-thumb" id="progress-thumb"></div>
+        </div>
+        <div class="progress-times">
+          <span id="p-current">00:00</span>
+          <span id="p-duration">00:00</span>
+        </div>
+      </div>
+
+      <div class="controls">
+        <button class="ctrl" onclick="seekBy(-15)" aria-label="Atrás 15 segundos">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/>
+          </svg>
+        </button>
+        <button class="ctrl play" id="play-btn" onclick="togglePlay()" aria-label="Reproducir">
+          <svg viewBox="0 0 24 24" fill="currentColor" id="play-icon" aria-hidden="true">
+            <polygon points="6 4 20 12 6 20 6 4"/>
+          </svg>
+        </button>
+        <button class="ctrl" onclick="seekBy(15)" aria-label="Adelantar 15 segundos">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="player-toolbar">
+        <div class="toolbar-row">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+            <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+          </svg>
+          <input type="range" class="vol" min="0" max="100" value="80" id="vol-slider" oninput="setVolume(this.value)" aria-label="Volumen">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+            <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
+          </svg>
+        </div>
+        <div class="pill-row">
+          <button class="toggle-pill" id="loop-btn" onclick="toggleLoop()" aria-pressed="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/>
+              <polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/>
+            </svg>
+            Loop
+          </button>
+          <button class="toggle-pill" id="timer-btn" onclick="cycleTimer()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+            </svg>
+            <span id="timer-label">Sleep · Off</span>
+          </button>
+        </div>
+      </div>
+
+      <p class="loading" id="loading-msg" role="status" aria-live="polite"></p>
+    </div>
   </div>
-  <h2 class="player-title" id="p-title"></h2>
-  <p class="player-subtitle" id="p-sub"></p>
-  <div class="timer" id="p-timer">00:00</div>
-  <div class="controls">
-    <div class="ctrl-btn" onclick="restartAudio()">↺</div>
-    <div class="ctrl-btn play" id="play-btn" onclick="togglePlay()">▶</div>
-    <div class="ctrl-btn" onclick="stopAndBack()">■</div>
-  </div>
-  <div class="volume-row">
-    <span>🔈</span>
-    <input type="range" min="0" max="100" value="80" id="vol-slider" oninput="setVolume(this.value)">
-    <span>🔊</span>
-  </div>
-  <p class="loading" id="loading-msg"></p>
 </div>
 
 <script>
-const sessions = {
-  limpieza: {
-    name: 'Limpieza Energetica',
-    desc: 'Mantras y canticos de elevacion espiritual',
-    emoji: '✨',
-    file: 'audio/LIMPIEZA ENERGETICA Mantras  y canticos de Elevación Espiritual. Elimina Energía Negativa y Bloqueos.mp3'
-  },
-  cuantica: {
-    name: 'Meditacion Cuantica',
-    desc: 'Viaje al interior con Metodo Wim Hof',
-    emoji: '🧘',
-    file: 'audio/Meditación Cuántica –Viaje al Interior con Método Wim Hof ｜Conecta con tus cuerpos ｜Yessy Hiolística.mp3'
-  },
-  thirdEye: {
-    name: 'Third Eye',
-    desc: '963 + 852 + 639 Hz · pineal & heart chakra',
-    emoji: '👁️',
-    file: 'audio/third-eye.mp3'
-  },
-  oneness: {
-    name: 'Oneness',
-    desc: '963 Hz · return to source',
-    emoji: '🕉️',
-    file: 'audio/oneness.mp3'
-  },
-  positive: {
-    name: 'Positive Energy',
-    desc: 'Attract peace, abundance, success',
-    emoji: '🌟',
-    file: 'audio/positive-energy.mp3'
-  },
-  angels: {
-    name: 'Angels & Archangels',
-    desc: '432 Hz · body, soul & spirit healing',
-    emoji: '😇',
-    file: 'audio/angels.mp3'
-  }
-};
+const CATEGORIES = [
+  { id: 'cleansing',  label: 'Limpieza & Sanación',      color: 'var(--c-cleansing)' },
+  { id: 'breath',     label: 'Breathwork',                color: 'var(--c-breath)' },
+  { id: 'frequency',  label: 'Frecuencias / Solfeggio',   color: 'var(--c-frequency)' },
+  { id: 'ra',         label: 'Serie RA',                  color: 'var(--c-ra)' },
+  { id: 'extracts',   label: 'Otras Meditaciones',        color: 'var(--c-extracts)' },
+];
 
-let currentSession = null;
+const SESSIONS = [
+  // Cleansing
+  { id: 'limpieza',  cat: 'cleansing', emoji: '✨',
+    title: 'Limpieza Energética',
+    desc: 'Mantras y cánticos de elevación espiritual.',
+    file: 'audio/limpieza-energetica.mp3', duration: '31m' },
+
+  // Breathwork
+  { id: 'wim-hof',   cat: 'breath', emoji: '🧘',
+    title: 'Meditación Cuántica',
+    desc: 'Viaje al interior con el método Wim Hof.',
+    file: 'audio/wim-hof.mp3', duration: '23m' },
+
+  // Frequencies
+  { id: 'third-eye', cat: 'frequency', emoji: '👁️',
+    title: 'Tercer Ojo',
+    desc: '963 + 852 + 639 Hz · glándula pineal y chakra del corazón.',
+    file: 'audio/third-eye.mp3', duration: '71m' },
+  { id: 'oneness',   cat: 'frequency', emoji: '🕉️',
+    title: 'Unidad',
+    desc: '963 Hz · regreso a la fuente.',
+    file: 'audio/oneness.mp3', duration: '63m' },
+  { id: 'positive',  cat: 'frequency', emoji: '🌟',
+    title: 'Energía Positiva',
+    desc: 'Atrae paz, abundancia y éxito.',
+    file: 'audio/positive-energy.mp3', duration: '60m' },
+  { id: 'angels',    cat: 'frequency', emoji: '😇',
+    title: 'Ángeles & Arcángeles',
+    desc: '432 Hz · sanación de cuerpo, alma y espíritu.',
+    file: 'audio/angels.mp3', duration: '60m' },
+
+  // RA Series
+  { id: 'ra-1',      cat: 'ra', emoji: '①',
+    title: 'RA 1 · Dualidad y Trinidad',
+    desc: 'Activación de la dualidad y la trinidad.',
+    file: 'audio/ra-1-dualidad-trinidad.mp3', duration: '13m' },
+  { id: 'ra-2',      cat: 'ra', emoji: '②',
+    title: 'RA 2',
+    desc: 'Segunda meditación de la serie RA.',
+    file: 'audio/ra-2.mp3', duration: '14m' },
+  { id: 'ra-3',      cat: 'ra', emoji: '③',
+    title: 'RA 3',
+    desc: 'Tercera meditación de la serie RA.',
+    file: 'audio/ra-3.mp3', duration: '27m' },
+  { id: 'ra-4-1',    cat: 'ra', emoji: '④',
+    title: 'RA 4.1 · Líneas Temporales',
+    desc: 'Cerrar líneas temporales.',
+    file: 'audio/ra-4-1-lineas-temporales.mp3', duration: '9m' },
+  { id: 'ra-4-2',    cat: 'ra', emoji: '④',
+    title: 'RA 4.2 · Implantes',
+    desc: 'Proceso e inicio de desparasitación y eliminación de implantes.',
+    file: 'audio/ra-4-2-implantes.mp3', duration: '9m' },
+  { id: 'ra-5',      cat: 'ra', emoji: '⑤',
+    title: 'RA 5',
+    desc: 'Quinta meditación de la serie RA.',
+    file: 'audio/ra-5.mp3', duration: '49m' },
+  { id: 'ra-6',      cat: 'ra', emoji: '⑥',
+    title: 'RA 6 · Niño Interior',
+    desc: 'Sanación del niño interior.',
+    file: 'audio/ra-6-nino-interior.mp3', duration: '42m' },
+  { id: 'ra-7',      cat: 'ra', emoji: '⑦',
+    title: 'RA 7 · Cámara del Corazón',
+    desc: 'Entrada a la Cámara Sagrada del Corazón.',
+    file: 'audio/ra-7-camara-corazon.mp3', duration: '57m' },
+];
+
+const sessionsById = Object.fromEntries(SESSIONS.map(s => [s.id, s]));
+
+// ───── RENDER ─────
+function renderCategories(filter = '') {
+  const host = document.getElementById('categories-host');
+  host.innerHTML = '';
+  const q = filter.trim().toLowerCase();
+  let anyVisible = false;
+
+  for (const cat of CATEGORIES) {
+    const items = SESSIONS.filter(s => s.cat === cat.id && (
+      !q ||
+      s.title.toLowerCase().includes(q) ||
+      s.desc.toLowerCase().includes(q)
+    ));
+    if (items.length === 0) continue;
+    anyVisible = true;
+
+    const section = document.createElement('section');
+    section.className = 'category';
+    section.style.setProperty('--cat-color', cat.color);
+    section.innerHTML = `
+      <div class="category-header">
+        <span class="category-dot"></span>
+        <span class="category-title">${cat.label}</span>
+        <span class="category-count">${items.length}</span>
+      </div>
+      <div class="cards"></div>
+    `;
+    const cards = section.querySelector('.cards');
+    for (const s of items) {
+      const btn = document.createElement('button');
+      btn.className = 'card';
+      btn.type = 'button';
+      btn.onclick = () => selectSession(s.id);
+      btn.innerHTML = `
+        <span class="card-icon cat-${cat.id}" aria-hidden="true">${s.emoji}</span>
+        <div class="card-body">
+          <div class="card-title">${s.title}</div>
+          <div class="card-desc">${s.desc}</div>
+          <div class="card-meta">${s.duration}</div>
+        </div>
+      `;
+      cards.appendChild(btn);
+    }
+    host.appendChild(section);
+  }
+
+  document.getElementById('empty-state').style.display = anyVisible ? 'none' : '';
+}
+
+// ───── SEARCH ─────
+const searchInput = document.getElementById('search');
+const searchBar = document.getElementById('search-bar');
+const searchClear = document.getElementById('search-clear');
+searchInput.addEventListener('input', () => {
+  searchBar.classList.toggle('has-value', searchInput.value.length > 0);
+  renderCategories(searchInput.value);
+});
+searchClear.addEventListener('click', () => {
+  searchInput.value = '';
+  searchBar.classList.remove('has-value');
+  renderCategories('');
+  searchInput.focus();
+});
+
+// ───── PLAYER ─────
+let current = null;
 let audio = null;
-let timerInterval = null;
 let isPlaying = false;
+let loopOn = true;
+let sleepTimerMs = 0;
+let sleepDeadline = 0;
+let sleepInterval = null;
+const SLEEP_STEPS = [0, 10 * 60, 20 * 60, 30 * 60, 45 * 60, 60 * 60]; // seconds
 
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
 }
 
-function formatTime(seconds) {
-  if (isNaN(seconds) || seconds < 0) seconds = 0;
-  const m = Math.floor(seconds / 60);
+function fmt(seconds) {
+  if (!isFinite(seconds) || seconds < 0) seconds = 0;
+  const h = Math.floor(seconds / 3600);
+  const m = Math.floor((seconds % 3600) / 60);
   const s = Math.floor(seconds % 60);
+  if (h) return `${h}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
   return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
 }
 
 function selectSession(id) {
-  currentSession = sessions[id];
+  current = sessionsById[id];
+  if (!current) return;
 
-  document.getElementById('p-emoji').textContent = currentSession.emoji;
-  document.getElementById('p-title').textContent = currentSession.name;
-  document.getElementById('p-sub').textContent = currentSession.desc;
-  document.getElementById('p-timer').textContent = '00:00';
-  document.getElementById('play-btn').textContent = '▶';
+  document.getElementById('p-emoji').textContent = current.emoji;
+  document.getElementById('p-title').textContent = current.title;
+  document.getElementById('p-sub').textContent = current.desc;
+  document.getElementById('p-current').textContent = '00:00';
+  document.getElementById('p-duration').textContent = '--:--';
+  document.getElementById('progress-fill').style.width = '0%';
+  document.getElementById('progress-thumb').style.left = '0%';
   document.getElementById('loading-msg').textContent = '';
+  setPlayIcon(false);
 
-  // Stop any previous audio
-  if (audio) {
-    audio.pause();
-    audio.src = '';
-  }
-
-  // Create new audio element
-  audio = new Audio(currentSession.file);
+  if (audio) { audio.pause(); audio.src = ''; }
+  audio = new Audio(current.file);
   audio.volume = document.getElementById('vol-slider').value / 100;
-  audio.loop = true;
+  audio.loop = loopOn;
   audio.preload = 'auto';
 
-  // Update timer display as audio plays
-  audio.addEventListener('timeupdate', () => {
-    document.getElementById('p-timer').textContent = formatTime(audio.currentTime);
+  audio.addEventListener('loadedmetadata', () => {
+    document.getElementById('p-duration').textContent = fmt(audio.duration);
   });
-
+  audio.addEventListener('timeupdate', () => {
+    const pct = audio.duration ? (audio.currentTime / audio.duration) * 100 : 0;
+    document.getElementById('progress-fill').style.width = pct + '%';
+    document.getElementById('progress-thumb').style.left = pct + '%';
+    document.getElementById('p-current').textContent = fmt(audio.currentTime);
+  });
   audio.addEventListener('ended', () => {
-    // loop is on, but just in case
-    isPlaying = false;
-    document.getElementById('play-btn').textContent = '▶';
+    if (!loopOn) { isPlaying = false; setPlayIcon(false); }
+  });
+  audio.addEventListener('error', () => {
+    document.getElementById('loading-msg').textContent = 'No se pudo cargar el audio.';
   });
 
   isPlaying = false;
   showScreen('player');
 }
 
-function togglePlay() {
-  if (!audio || !currentSession) return;
+function setPlayIcon(playing) {
+  const icon = document.getElementById('play-icon');
+  document.getElementById('play-btn').setAttribute('aria-label', playing ? 'Pausar' : 'Reproducir');
+  icon.innerHTML = playing
+    ? '<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>'
+    : '<polygon points="6 4 20 12 6 20 6 4"/>';
+}
 
+function togglePlay() {
+  if (!audio || !current) return;
   if (isPlaying) {
     audio.pause();
     isPlaying = false;
-    document.getElementById('play-btn').textContent = '▶';
+    setPlayIcon(false);
   } else {
-    document.getElementById('loading-msg').textContent = 'Loading audio...';
-    const playPromise = audio.play();
-    if (playPromise !== undefined) {
-      playPromise.then(() => {
+    document.getElementById('loading-msg').textContent = 'Cargando audio…';
+    const p = audio.play();
+    if (p !== undefined) {
+      p.then(() => {
         document.getElementById('loading-msg').textContent = '';
         isPlaying = true;
-        document.getElementById('play-btn').textContent = '⏸';
-      }).catch(err => {
-        document.getElementById('loading-msg').textContent = 'Tap play again';
+        setPlayIcon(true);
+      }).catch(() => {
+        document.getElementById('loading-msg').textContent = 'Toca play de nuevo';
         isPlaying = false;
       });
     }
   }
 }
 
-function restartAudio() {
-  if (audio) {
-    audio.currentTime = 0;
-    document.getElementById('p-timer').textContent = '00:00';
-    if (isPlaying) {
-      audio.play();
-    }
-  }
+function seekBy(delta) {
+  if (!audio) return;
+  audio.currentTime = Math.max(0, Math.min((audio.duration || 0), audio.currentTime + delta));
 }
 
-function setVolume(val) {
-  if (audio) {
-    audio.volume = val / 100;
-  }
-}
+function setVolume(val) { if (audio) audio.volume = val / 100; }
 
 function stopAndBack() {
-  if (audio) {
-    audio.pause();
-    audio.currentTime = 0;
-  }
+  if (audio) { audio.pause(); audio.currentTime = 0; }
   isPlaying = false;
+  setPlayIcon(false);
+  cancelSleep();
   showScreen('home');
 }
 
-// Register service worker for offline
+function toggleLoop() {
+  loopOn = !loopOn;
+  if (audio) audio.loop = loopOn;
+  const btn = document.getElementById('loop-btn');
+  btn.classList.toggle('active', loopOn);
+  btn.setAttribute('aria-pressed', String(loopOn));
+}
+
+function cycleTimer() {
+  const idx = SLEEP_STEPS.indexOf(sleepTimerMs / 1000);
+  const next = SLEEP_STEPS[(idx + 1) % SLEEP_STEPS.length];
+  sleepTimerMs = next * 1000;
+  if (sleepInterval) { clearInterval(sleepInterval); sleepInterval = null; }
+  const btn = document.getElementById('timer-btn');
+  btn.classList.toggle('active', sleepTimerMs > 0);
+  if (sleepTimerMs === 0) {
+    document.getElementById('timer-label').textContent = 'Sleep · Off';
+    return;
+  }
+  sleepDeadline = Date.now() + sleepTimerMs;
+  updateSleepLabel();
+  sleepInterval = setInterval(() => {
+    const remaining = sleepDeadline - Date.now();
+    if (remaining <= 0) {
+      clearInterval(sleepInterval); sleepInterval = null;
+      if (audio && isPlaying) togglePlay();
+      sleepTimerMs = 0;
+      btn.classList.remove('active');
+      document.getElementById('timer-label').textContent = 'Sleep · Off';
+      return;
+    }
+    updateSleepLabel();
+  }, 1000);
+}
+
+function cancelSleep() {
+  if (sleepInterval) { clearInterval(sleepInterval); sleepInterval = null; }
+  sleepTimerMs = 0;
+  const btn = document.getElementById('timer-btn');
+  btn.classList.remove('active');
+  document.getElementById('timer-label').textContent = 'Sleep · Off';
+}
+
+function updateSleepLabel() {
+  const remaining = Math.max(0, Math.floor((sleepDeadline - Date.now()) / 1000));
+  document.getElementById('timer-label').textContent = 'Sleep · ' + fmt(remaining);
+}
+
+// Progress bar seek
+const progressBar = document.getElementById('progress-bar');
+function seekFromEvent(ev) {
+  if (!audio || !audio.duration) return;
+  const rect = progressBar.getBoundingClientRect();
+  const x = (ev.touches ? ev.touches[0].clientX : ev.clientX) - rect.left;
+  const pct = Math.max(0, Math.min(1, x / rect.width));
+  audio.currentTime = pct * audio.duration;
+}
+progressBar.addEventListener('click', seekFromEvent);
+
+// Initial render
+renderCategories();
+
+// Service worker
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw.js').catch(() => {});
 }

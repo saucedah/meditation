@@ -1,4 +1,4 @@
-const CACHE = 'meditate-v2';
+const CACHE = 'meditate-v3';
 const ASSETS = ['/', '/index.html', '/manifest.json'];
 
 self.addEventListener('install', e => {
