@@ -91,9 +91,10 @@
   }
   .home-header h1 {
     font-family: 'Lora', serif;
-    font-size: 30px; font-weight: 500; letter-spacing: 6px;
+    font-size: 56px; font-weight: 700; letter-spacing: 4px;
     text-transform: uppercase;
-    margin-top: 8px;
+    text-align: center;
+    margin-top: 14px;
     background: linear-gradient(135deg, #ebe4f3 0%, #b388ff 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -103,49 +104,6 @@
     color: var(--text-dim); margin-top: 6px;
     font-size: 13px; letter-spacing: 3px; text-transform: uppercase;
   }
-
-  /* Search */
-  .search-bar {
-    position: relative;
-    margin: 20px 0 28px;
-  }
-  .search-bar input {
-    width: 100%;
-    background: var(--card-bg);
-    border: 1px solid var(--card-border);
-    border-radius: 14px;
-    padding: 14px 18px 14px 46px;
-    color: var(--text);
-    font-family: inherit; font-size: 15px;
-    outline: none;
-    transition: border-color 0.2s, background 0.2s;
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-  }
-  .search-bar input::placeholder { color: var(--text-faint); }
-  .search-bar input:focus {
-    border-color: var(--accent);
-    background: var(--card-bg-hover);
-  }
-  .search-bar svg {
-    position: absolute; left: 16px; top: 50%;
-    transform: translateY(-50%);
-    width: 18px; height: 18px;
-    color: var(--text-faint);
-    pointer-events: none;
-  }
-  .search-clear {
-    position: absolute; right: 8px; top: 50%;
-    transform: translateY(-50%);
-    width: 32px; height: 32px;
-    display: none;
-    align-items: center; justify-content: center;
-    color: var(--text-faint);
-    cursor: pointer; border-radius: 8px;
-    border: none; background: transparent;
-  }
-  .search-clear:hover { color: var(--text); background: var(--card-bg); }
-  .search-bar.has-value .search-clear { display: flex; }
 
   /* Categories */
   .category {
@@ -207,6 +165,54 @@
   .card-icon.cat-ra        { background: linear-gradient(135deg, rgba(255,128,192,0.4), rgba(255,128,192,0.08)); }
   .card-icon.cat-extracts  { background: linear-gradient(135deg, rgba(126,236,192,0.4), rgba(126,236,192,0.08)); }
 
+  /* Download button on card */
+  .card-dl {
+    position: relative;
+    width: 38px; height: 38px;
+    flex-shrink: 0;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 50%;
+    color: var(--text-faint);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: color 0.2s, background 0.2s, border-color 0.2s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .card-dl:hover { color: var(--text-dim); background: var(--card-bg-hover); }
+  .card-dl:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .card-dl svg { width: 18px; height: 18px; }
+  .card-dl.is-cached { color: var(--accent); }
+  .card-dl.is-cached:hover { color: #ff8a8a; }   /* hint at delete on hover */
+  .card-dl.is-cached:hover .dl-icon-check { display: none; }
+  .card-dl.is-cached:hover .dl-icon-trash { display: block; }
+  .card-dl.is-busy { color: var(--accent); }
+  .dl-icon-cloud, .dl-icon-check, .dl-icon-trash, .dl-icon-spinner { display: none; }
+  .card-dl.is-idle   .dl-icon-cloud   { display: block; }
+  .card-dl.is-busy   .dl-icon-spinner { display: block; animation: spin 1.2s linear infinite; }
+  .card-dl.is-cached .dl-icon-check   { display: block; }
+  .dl-icon-trash { /* shown only on hover when cached */ }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .dl-ring {
+    position: absolute; inset: 0;
+    pointer-events: none;
+    transform: rotate(-90deg);
+  }
+  .dl-ring circle {
+    fill: none;
+    stroke-width: 2;
+    cx: 19; cy: 19; r: 16;
+  }
+  .dl-ring .track { stroke: rgba(255,255,255,0.06); }
+  .dl-ring .fill {
+    stroke: var(--accent);
+    stroke-linecap: round;
+    stroke-dasharray: 100.5;        /* 2π × 16 ≈ 100.5 */
+    stroke-dashoffset: 100.5;
+    transition: stroke-dashoffset 0.18s linear;
+  }
+
   .card-body { flex: 1; min-width: 0; }
   .card-title {
     font-family: 'Lora', serif;
@@ -234,12 +240,6 @@
     font-variant-numeric: tabular-nums;
     letter-spacing: 0.5px;
   }
-
-  .empty-state {
-    text-align: center; padding: 40px 20px;
-    color: var(--text-dim);
-  }
-  .empty-state .em { font-size: 36px; display: block; margin-bottom: 8px; opacity: 0.6; }
 
   /* ───── PLAYER ───── */
   .player {
@@ -454,24 +454,7 @@
       <p>Find your inner peace</p>
     </div>
 
-    <div class="search-bar" id="search-bar">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-      </svg>
-      <input type="search" id="search" placeholder="Buscar meditación…" autocomplete="off" aria-label="Buscar meditación">
-      <button class="search-clear" id="search-clear" aria-label="Limpiar búsqueda">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14">
-          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-        </svg>
-      </button>
-    </div>
-
     <div id="categories-host"></div>
-
-    <div id="empty-state" class="empty-state" style="display:none;">
-      <span class="em">🌙</span>
-      <p>Nada por aquí. Prueba otra búsqueda.</p>
-    </div>
   </div>
 </div>
 
@@ -564,7 +547,7 @@
 <script>
 const CATEGORIES = [
   { id: 'cleansing',  label: 'Limpieza & Sanación',      color: 'var(--c-cleansing)' },
-  { id: 'frequency',  label: 'Frecuencias / Solfeggio',   color: 'var(--c-frequency)' },
+  { id: 'frequency',  label: 'Frecuencias',                color: 'var(--c-frequency)' },
   { id: 'ra',         label: 'Serie RA',                  color: 'var(--c-ra)' },
   { id: 'extracts',   label: 'Otras Meditaciones',        color: 'var(--c-extracts)' },
 ];
@@ -655,20 +638,13 @@ const SESSIONS = [
 const sessionsById = Object.fromEntries(SESSIONS.map(s => [s.id, s]));
 
 // ───── RENDER ─────
-function renderCategories(filter = '') {
+function renderCategories() {
   const host = document.getElementById('categories-host');
   host.innerHTML = '';
-  const q = filter.trim().toLowerCase();
-  let anyVisible = false;
 
   for (const cat of CATEGORIES) {
-    const items = SESSIONS.filter(s => s.cat === cat.id && (
-      !q ||
-      s.title.toLowerCase().includes(q) ||
-      s.desc.toLowerCase().includes(q)
-    ));
+    const items = SESSIONS.filter(s => s.cat === cat.id);
     if (items.length === 0) continue;
-    anyVisible = true;
 
     const section = document.createElement('section');
     section.className = 'category';
@@ -683,40 +659,66 @@ function renderCategories(filter = '') {
     `;
     const cards = section.querySelector('.cards');
     for (const s of items) {
-      const btn = document.createElement('button');
-      btn.className = 'card';
-      btn.type = 'button';
-      btn.onclick = () => selectSession(s.id);
-      btn.innerHTML = `
+      const wrap = document.createElement('div');
+      wrap.className = 'card';
+      wrap.setAttribute('role', 'button');
+      wrap.tabIndex = 0;
+      wrap.addEventListener('click', ev => {
+        if (ev.target.closest('.card-dl')) return; // download button has its own handler
+        selectSession(s.id);
+      });
+      wrap.addEventListener('keydown', ev => {
+        if ((ev.key === 'Enter' || ev.key === ' ') && !ev.target.closest('.card-dl')) {
+          ev.preventDefault();
+          selectSession(s.id);
+        }
+      });
+      wrap.innerHTML = `
         <span class="card-icon cat-${cat.id}" aria-hidden="true">${s.emoji}</span>
         <div class="card-body">
           <div class="card-title">${s.title}</div>
           <div class="card-desc">${s.desc}</div>
           <div class="card-meta">${s.duration}</div>
         </div>
+        <button class="card-dl is-idle" type="button"
+          data-session="${s.id}" aria-label="Descargar para offline">
+          <svg class="dl-ring" viewBox="0 0 38 38" aria-hidden="true">
+            <circle class="track"></circle>
+            <circle class="fill"></circle>
+          </svg>
+          <svg class="dl-icon-cloud" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/>
+            <line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+          <svg class="dl-icon-spinner" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/>
+            <line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/>
+            <line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/>
+            <line x1="4.93" y1="19.07" x2="7.76" y2="16.24"/><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"/>
+          </svg>
+          <svg class="dl-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+          <svg class="dl-icon-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polyline points="3 6 5 6 21 6"/>
+            <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+            <path d="M10 11v6M14 11v6"/>
+            <path d="M9 6V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/>
+          </svg>
+        </button>
       `;
-      cards.appendChild(btn);
+      cards.appendChild(wrap);
     }
     host.appendChild(section);
   }
 
-  document.getElementById('empty-state').style.display = anyVisible ? 'none' : '';
+  // Wire download buttons + reflect cached state
+  for (const btn of host.querySelectorAll('.card-dl')) {
+    btn.addEventListener('click', onDownloadClick);
+  }
+  refreshDownloadStates();
 }
-
-// ───── SEARCH ─────
-const searchInput = document.getElementById('search');
-const searchBar = document.getElementById('search-bar');
-const searchClear = document.getElementById('search-clear');
-searchInput.addEventListener('input', () => {
-  searchBar.classList.toggle('has-value', searchInput.value.length > 0);
-  renderCategories(searchInput.value);
-});
-searchClear.addEventListener('click', () => {
-  searchInput.value = '';
-  searchBar.classList.remove('has-value');
-  renderCategories('');
-  searchInput.focus();
-});
 
 // ───── PLAYER ─────
 let current = null;
@@ -886,13 +888,115 @@ function seekFromEvent(ev) {
 }
 progressBar.addEventListener('click', seekFromEvent);
 
+// ───── OFFLINE DOWNLOADS ─────
+const AUDIO_CACHE_NAME = 'meditate-audio-v1';
+const dlState = new Map(); // sessionId → 'cached' | { progress: 0..1 } | undefined
+
+async function refreshDownloadStates() {
+  if (!('caches' in window)) return;
+  try {
+    const cache = await caches.open(AUDIO_CACHE_NAME);
+    for (const s of SESSIONS) {
+      const match = await cache.match(s.file);
+      if (match && dlState.get(s.id) !== 'cached') {
+        dlState.set(s.id, 'cached');
+      }
+    }
+    for (const btn of document.querySelectorAll('.card-dl')) {
+      paintDownloadBtn(btn);
+    }
+  } catch (e) { /* ignore */ }
+}
+
+function paintDownloadBtn(btn) {
+  const id = btn.dataset.session;
+  const state = dlState.get(id);
+  btn.classList.remove('is-idle', 'is-busy', 'is-cached');
+  const fill = btn.querySelector('.dl-ring .fill');
+  if (state === 'cached') {
+    btn.classList.add('is-cached');
+    btn.setAttribute('aria-label', 'Eliminar descarga');
+    fill.style.strokeDashoffset = 100.5;
+  } else if (state && typeof state.progress === 'number') {
+    btn.classList.add('is-busy');
+    btn.setAttribute('aria-label', `Descargando ${Math.round(state.progress * 100)}%`);
+    fill.style.strokeDashoffset = 100.5 * (1 - state.progress);
+  } else {
+    btn.classList.add('is-idle');
+    btn.setAttribute('aria-label', 'Descargar para offline');
+    fill.style.strokeDashoffset = 100.5;
+  }
+}
+
+async function onDownloadClick(ev) {
+  ev.stopPropagation();
+  const btn = ev.currentTarget;
+  const id = btn.dataset.session;
+  const session = sessionsById[id];
+  if (!session) return;
+
+  const state = dlState.get(id);
+
+  if (state === 'cached') {
+    if (!confirm(`¿Eliminar "${session.title}" del almacenamiento offline?`)) return;
+    try {
+      const cache = await caches.open(AUDIO_CACHE_NAME);
+      await cache.delete(session.file);
+      dlState.delete(id);
+      paintDownloadBtn(btn);
+    } catch (e) { console.error(e); }
+    return;
+  }
+
+  if (state && typeof state.progress === 'number') return; // already running
+
+  dlState.set(id, { progress: 0 });
+  paintDownloadBtn(btn);
+
+  try {
+    const resp = await fetch(session.file);
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    const total = parseInt(resp.headers.get('content-length') || '0', 10);
+    const reader = resp.body.getReader();
+    const chunks = [];
+    let received = 0;
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      chunks.push(value);
+      received += value.length;
+      if (total > 0) {
+        dlState.set(id, { progress: received / total });
+        paintDownloadBtn(btn);
+      }
+    }
+    const blob = new Blob(chunks, { type: 'audio/mpeg' });
+    const cache = await caches.open(AUDIO_CACHE_NAME);
+    await cache.put(session.file, new Response(blob, {
+      headers: { 'Content-Type': 'audio/mpeg', 'Content-Length': String(blob.size) }
+    }));
+    dlState.set(id, 'cached');
+    paintDownloadBtn(btn);
+  } catch (err) {
+    console.error('Download failed:', err);
+    dlState.delete(id);
+    paintDownloadBtn(btn);
+    alert(`No se pudo descargar "${session.title}". Verifica tu conexión.`);
+  }
+}
+
 // Initial render
 renderCategories();
 
 // Service worker
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('sw.js').catch(() => {});
+  navigator.serviceWorker.register('sw.js')
+    .then(() => refreshDownloadStates())
+    .catch(() => {});
 }
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden) refreshDownloadStates();
+});
 </script>
 </body>
 </html>
