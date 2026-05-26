@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Meditate · Calm style</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  :root{
+    --bg:#fef8f3;
+    --surface:#fff;
+    --ink:#23211d;
+    --ink-2:#6b6660;
+    --ink-3:#a39c93;
+    --accent:#ff8c5a;       /* warm orange */
+    --accent-soft:#fde0d2;
+    --lilac:#c5b6ee;
+    --lilac-soft:#ece7f9;
+    --mint:#c8e6c9;
+    --mint-soft:#e9f5e9;
+    --sky:#bedcf2;
+    --sky-soft:#e6f1f9;
+    --rose:#f4b8c5;
+    --rose-soft:#fbe7eb;
+  }
+  body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(--ink);min-height:100dvh;font-size:16px;line-height:1.5}
+  .wrap{max-width:480px;margin:0 auto;padding:24px 20px 40px}
+
+  .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px}
+  .avatar{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--lilac),var(--rose));display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:600;color:#fff}
+  .greet-label{font-size:13px;color:var(--ink-3)}
+  .greet-name{font-family:'DM Serif Display',serif;font-size:24px;line-height:1.1;margin-top:2px}
+  .icon-btn{width:44px;height:44px;border-radius:50%;background:var(--surface);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 2px 12px rgba(0,0,0,0.04)}
+  .icon-btn svg{width:20px;height:20px;color:var(--ink)}
+
+  .hero{
+    background:linear-gradient(135deg,#ffb59b 0%,#ff8c5a 60%,#e96a3b 100%);
+    border-radius:28px;padding:28px 24px 24px;color:#fff;margin-bottom:28px;position:relative;overflow:hidden;
+  }
+  .hero::after{content:'';position:absolute;right:-40px;bottom:-40px;width:200px;height:200px;border-radius:50%;background:rgba(255,255,255,0.12)}
+  .hero::before{content:'';position:absolute;right:40px;top:-30px;width:80px;height:80px;border-radius:50%;background:rgba(255,255,255,0.15)}
+  .hero-eyebrow{font-size:11px;letter-spacing:2px;text-transform:uppercase;opacity:0.85;font-weight:600}
+  .hero-title{font-family:'DM Serif Display',serif;font-size:32px;line-height:1.05;margin:8px 0 6px;max-width:280px;position:relative;z-index:1}
+  .hero-sub{font-size:14px;opacity:0.92;max-width:280px;position:relative;z-index:1}
+  .hero-cta{display:inline-flex;align-items:center;gap:8px;background:#fff;color:#e96a3b;font-weight:600;font-size:14px;padding:11px 18px;border-radius:999px;margin-top:18px;border:none;cursor:pointer;position:relative;z-index:1}
+  .hero-cta svg{width:14px;height:14px}
+
+  .section{margin-bottom:28px}
+  .section-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:14px;padding:0 2px}
+  .section-title{font-family:'DM Serif Display',serif;font-size:22px}
+  .section-more{font-size:13px;color:var(--ink-2);text-decoration:none;font-weight:500}
+
+  /* horizontal scroll lane for featured */
+  .lane{display:flex;gap:14px;overflow-x:auto;padding:4px 2px 6px;scrollbar-width:none;-ms-overflow-style:none;scroll-snap-type:x mandatory}
+  .lane::-webkit-scrollbar{display:none}
+  .tile{flex:0 0 200px;border-radius:22px;padding:18px;color:#fff;cursor:pointer;scroll-snap-align:start;display:flex;flex-direction:column;justify-content:space-between;min-height:220px;position:relative;overflow:hidden}
+  .tile.t-lilac{background:linear-gradient(155deg,#a38ee5,#7a5cd0)}
+  .tile.t-mint{background:linear-gradient(155deg,#84c989,#509659)}
+  .tile.t-sky{background:linear-gradient(155deg,#7eb3df,#4b88c1)}
+  .tile.t-rose{background:linear-gradient(155deg,#e4868f,#c25867)}
+  .tile-emoji{font-size:46px;line-height:1}
+  .tile-cat{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;opacity:0.85;font-weight:600}
+  .tile-title{font-family:'DM Serif Display',serif;font-size:20px;line-height:1.1;margin:4px 0 4px}
+  .tile-meta{font-size:12px;opacity:0.85;display:flex;align-items:center;gap:6px}
+  .tile-meta .dot{width:3px;height:3px;border-radius:50%;background:currentColor;opacity:0.7}
+
+  /* category chips */
+  .chips{display:flex;gap:8px;overflow-x:auto;padding:4px 2px;margin-bottom:14px;scrollbar-width:none}
+  .chips::-webkit-scrollbar{display:none}
+  .chip{flex-shrink:0;border:1.5px solid #ebe5dd;background:transparent;color:var(--ink-2);font-family:inherit;font-size:13px;font-weight:500;padding:9px 16px;border-radius:999px;cursor:pointer;white-space:nowrap}
+  .chip.active{background:var(--ink);color:#fff;border-color:var(--ink)}
+
+  .rows{display:flex;flex-direction:column;gap:12px}
+  .row{
+    background:var(--surface);border-radius:18px;padding:14px;display:flex;gap:14px;align-items:center;cursor:pointer;
+    box-shadow:0 1px 0 rgba(0,0,0,0.02);
+  }
+  .row-thumb{width:60px;height:60px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0}
+  .thumb-cleansing{background:var(--lilac-soft)}
+  .thumb-frequency{background:var(--accent-soft)}
+  .thumb-ra{background:var(--mint-soft)}
+  .thumb-extracts{background:var(--sky-soft)}
+  .row-body{flex:1;min-width:0}
+  .row-title{font-weight:600;font-size:15px;color:var(--ink);margin-bottom:2px;line-height:1.2}
+  .row-desc{font-size:13px;color:var(--ink-2);line-height:1.4;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}
+  .row-meta{font-size:12px;color:var(--ink-3);margin-top:5px;display:flex;gap:6px;align-items:center}
+  .row-meta .dot{width:3px;height:3px;border-radius:50%;background:currentColor}
+  .row-play{width:40px;height:40px;border-radius:50%;background:var(--ink);color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;border:none;cursor:pointer}
+  .row-play svg{width:14px;height:14px;fill:currentColor}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <div style="display:flex;gap:12px;align-items:center">
+      <div class="avatar">E</div>
+      <div>
+        <div class="greet-label">Buen día,</div>
+        <div class="greet-name">Evelyn</div>
+      </div>
+    </div>
+    <button class="icon-btn" aria-label="Buscar">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    </button>
+  </div>
+
+  <div class="hero">
+    <div class="hero-eyebrow">Hoy · Recomendado</div>
+    <h1 class="hero-title">Cámara Sagrada del Corazón</h1>
+    <p class="hero-sub">Entra a tu corazón a través de la serie RA 7. 57 minutos de sanación profunda.</p>
+    <button class="hero-cta">
+      <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg>
+      Comenzar
+    </button>
+  </div>
+
+  <div class="section">
+    <div class="section-head">
+      <h2 class="section-title">Frecuencias para hoy</h2>
+      <a class="section-more">Ver todo</a>
+    </div>
+    <div class="lane">
+      <div class="tile t-lilac">
+        <div class="tile-emoji">👁️</div>
+        <div>
+          <div class="tile-cat">Solfeggio</div>
+          <div class="tile-title">Tercer Ojo</div>
+          <div class="tile-meta">963 + 852 + 639 Hz <span class="dot"></span> 71m</div>
+        </div>
+      </div>
+      <div class="tile t-mint">
+        <div class="tile-emoji">🕉️</div>
+        <div>
+          <div class="tile-cat">Solfeggio</div>
+          <div class="tile-title">Unidad</div>
+          <div class="tile-meta">963 Hz <span class="dot"></span> 63m</div>
+        </div>
+      </div>
+      <div class="tile t-sky">
+        <div class="tile-emoji">😇</div>
+        <div>
+          <div class="tile-cat">Solfeggio</div>
+          <div class="tile-title">Ángeles & Arcángeles</div>
+          <div class="tile-meta">432 Hz <span class="dot"></span> 60m</div>
+        </div>
+      </div>
+      <div class="tile t-rose">
+        <div class="tile-emoji">🌟</div>
+        <div>
+          <div class="tile-cat">Solfeggio</div>
+          <div class="tile-title">Energía Positiva</div>
+          <div class="tile-meta">Abundancia <span class="dot"></span> 60m</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-head">
+      <h2 class="section-title">Serie RA</h2>
+      <a class="section-more">Ver todo</a>
+    </div>
+    <div class="chips">
+      <button class="chip active">Todos</button>
+      <button class="chip">Cortos</button>
+      <button class="chip">Sanación</button>
+      <button class="chip">Activación</button>
+    </div>
+    <div class="rows" id="ra-rows"></div>
+  </div>
+
+  <div class="section">
+    <div class="section-head">
+      <h2 class="section-title">Otras Meditaciones</h2>
+    </div>
+    <div class="rows" id="extracts-rows"></div>
+  </div>
+</div>
+
+<script src="_sessions.js"></script>
+<script>
+  function rowHtml(s){
+    return `<div class="row">
+      <div class="row-thumb thumb-${s.cat}">${s.emoji}</div>
+      <div class="row-body">
+        <div class="row-title">${s.title}</div>
+        <div class="row-desc">${s.desc}</div>
+        <div class="row-meta">${s.duration}</div>
+      </div>
+      <button class="row-play" aria-label="Reproducir">
+        <svg viewBox="0 0 24 24"><polygon points="6 4 20 12 6 20 6 4"/></svg>
+      </button>
+    </div>`;
+  }
+  document.getElementById('ra-rows').innerHTML = SESSIONS.filter(s=>s.cat==='ra').map(rowHtml).join('');
+  document.getElementById('extracts-rows').innerHTML = SESSIONS.filter(s=>s.cat==='extracts').map(rowHtml).join('');
+</script>
+</body>
+</html>

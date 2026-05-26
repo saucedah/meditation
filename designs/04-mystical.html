@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Meditate · Mystical luxury</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=EB+Garamond:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  :root{
+    --bg:#0c0a08;
+    --bg-2:#15110d;
+    --surface:#1a1611;
+    --gold:#c9a96e;
+    --gold-soft:#8a7544;
+    --gold-faint:rgba(201,169,110,0.18);
+    --ink:#ece3d2;
+    --ink-2:#a89b80;
+    --ink-3:#5e5747;
+    --line:rgba(201,169,110,0.22);
+  }
+  body{
+    font-family:'EB Garamond','Times New Roman',serif;background:var(--bg);color:var(--ink);min-height:100dvh;
+    font-size:17px;line-height:1.5;
+    background-image:
+      radial-gradient(circle at 20% 0%,rgba(201,169,110,0.07) 0%,transparent 40%),
+      radial-gradient(circle at 80% 80%,rgba(201,169,110,0.05) 0%,transparent 50%);
+  }
+  .wrap{max-width:480px;margin:0 auto;padding:30px 24px 60px}
+
+  /* header w/ gold serif */
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:38px}
+  .crest{font-family:'Cinzel',serif;font-size:14px;font-weight:500;letter-spacing:8px;color:var(--gold);text-transform:uppercase}
+  .moon{width:38px;height:38px;border-radius:50%;border:1px solid var(--gold);display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:16px}
+
+  /* hero */
+  .hero{text-align:center;margin-bottom:50px}
+  .hero-line{font-family:'Cinzel',serif;font-size:11px;letter-spacing:6px;color:var(--gold);text-transform:uppercase;margin-bottom:18px}
+  .hero-line span{display:inline-block;padding:0 12px;position:relative}
+  .hero-line span::before,.hero-line span::after{content:'';position:absolute;top:50%;width:40px;height:1px;background:var(--gold-soft)}
+  .hero-line span::before{right:100%}.hero-line span::after{left:100%}
+  .hero-title{font-family:'Cinzel',serif;font-size:42px;line-height:1.05;font-weight:500;letter-spacing:-0.5px;margin-bottom:16px}
+  .hero-title em{font-family:'EB Garamond',serif;font-style:italic;font-weight:400;color:var(--gold);letter-spacing:0}
+  .hero-sub{font-style:italic;color:var(--ink-2);max-width:340px;margin:0 auto;font-size:16px}
+
+  /* tarot-card-style stack */
+  .tarot-stack{position:relative;display:flex;justify-content:center;margin:38px 0}
+  .tarot{
+    width:170px;height:280px;border:1px solid var(--gold);
+    background:linear-gradient(180deg,#1f1a13 0%,#0f0c09 100%);
+    border-radius:8px;position:relative;padding:24px 18px;
+    box-shadow:0 10px 40px rgba(0,0,0,0.6),inset 0 0 30px rgba(201,169,110,0.04);
+    text-align:center;display:flex;flex-direction:column;justify-content:space-between;
+  }
+  .tarot-corner{position:absolute;color:var(--gold);font-family:'Cinzel',serif;font-size:10px;letter-spacing:2px}
+  .tarot-corner.tl{top:8px;left:10px}
+  .tarot-corner.br{bottom:8px;right:10px;transform:rotate(180deg)}
+  .tarot-roman{font-family:'Cinzel',serif;color:var(--gold);font-size:11px;letter-spacing:6px}
+  .tarot-symbol{font-size:60px;line-height:1}
+  .tarot-name{font-family:'Cinzel',serif;font-size:13px;letter-spacing:3px;color:var(--gold)}
+  .tarot::before,.tarot::after{
+    content:'';position:absolute;left:50%;width:60%;height:1px;background:var(--gold-soft);transform:translateX(-50%);opacity:0.5;
+  }
+  .tarot::before{top:42px}.tarot::after{bottom:42px}
+
+  /* sigil divider */
+  .sigil{display:flex;align-items:center;justify-content:center;gap:18px;margin:32px 0;color:var(--gold-soft)}
+  .sigil::before,.sigil::after{content:'';flex:1;border-top:1px solid var(--line)}
+  .sigil-glyph{font-family:'Cinzel',serif;font-size:14px;letter-spacing:8px;color:var(--gold)}
+
+  /* category section */
+  .cat-title{font-family:'Cinzel',serif;font-size:14px;letter-spacing:6px;color:var(--gold);text-transform:uppercase;margin-bottom:14px;text-align:center}
+
+  .vlist{display:flex;flex-direction:column}
+  .vrow{
+    display:flex;gap:18px;align-items:center;padding:16px 0;cursor:pointer;border-bottom:1px solid var(--line);
+  }
+  .vrow:last-child{border-bottom:none}
+  .vrow-sigil{
+    width:54px;height:54px;border:1px solid var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;
+    font-size:22px;flex-shrink:0;
+    background:radial-gradient(circle,rgba(201,169,110,0.08) 0%,transparent 70%);
+  }
+  .vrow-body{flex:1;min-width:0}
+  .vrow-roman{font-family:'Cinzel',serif;font-size:10px;letter-spacing:3px;color:var(--gold-soft);margin-bottom:3px}
+  .vrow-title{font-family:'EB Garamond',serif;font-size:19px;line-height:1.2;color:var(--ink)}
+  .vrow-title em{font-style:italic;color:var(--gold)}
+  .vrow-desc{font-size:13px;color:var(--ink-2);margin-top:3px;line-height:1.4;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}
+  .vrow-arrow{color:var(--gold);font-size:18px;padding:0 4px;font-family:serif;flex-shrink:0}
+
+  .footer-mark{text-align:center;margin-top:50px;color:var(--gold-soft);font-family:'Cinzel',serif;font-size:11px;letter-spacing:8px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div class="crest">Anima</div>
+    <div class="moon">☾</div>
+  </div>
+
+  <div class="hero">
+    <div class="hero-line"><span>Nocte Sancta</span></div>
+    <h1 class="hero-title">El templo<br/><em>interior</em></h1>
+    <p class="hero-sub">Dieciocho rituales de sanación. Ingresa cuando el corazón llame.</p>
+  </div>
+
+  <div class="tarot-stack">
+    <div class="tarot">
+      <div class="tarot-corner tl">VII</div>
+      <div class="tarot-corner br">VII</div>
+      <div class="tarot-roman">VII</div>
+      <div class="tarot-symbol">⑦</div>
+      <div class="tarot-name">CORAZÓN</div>
+    </div>
+  </div>
+
+  <div class="sigil"><span class="sigil-glyph">✦ ✧ ✦</span></div>
+
+  <div class="cat-title">Limpieza · Sanación</div>
+  <div class="vlist">
+    <div class="vrow">
+      <div class="vrow-sigil">✨</div>
+      <div class="vrow-body">
+        <div class="vrow-roman">CARTA I · 31 MIN</div>
+        <div class="vrow-title">Limpieza <em>Energética</em></div>
+        <div class="vrow-desc">Mantras y cánticos de elevación espiritual.</div>
+      </div>
+      <div class="vrow-arrow">→</div>
+    </div>
+    <div class="vrow">
+      <div class="vrow-sigil">🧘</div>
+      <div class="vrow-body">
+        <div class="vrow-roman">CARTA II · 23 MIN</div>
+        <div class="vrow-title">Meditación <em>Cuántica</em></div>
+        <div class="vrow-desc">Viaje al interior con método Wim Hof.</div>
+      </div>
+      <div class="vrow-arrow">→</div>
+    </div>
+  </div>
+
+  <div class="sigil"><span class="sigil-glyph">✦ ✧ ✦</span></div>
+
+  <div class="cat-title">Frecuencias Sagradas</div>
+  <div class="vlist">
+    <div class="vrow"><div class="vrow-sigil">👁️</div><div class="vrow-body"><div class="vrow-roman">CARTA III · 71 MIN</div><div class="vrow-title">Tercer <em>Ojo</em></div><div class="vrow-desc">963 + 852 + 639 Hz</div></div><div class="vrow-arrow">→</div></div>
+    <div class="vrow"><div class="vrow-sigil">🕉️</div><div class="vrow-body"><div class="vrow-roman">CARTA IV · 63 MIN</div><div class="vrow-title">Unidad <em>· 963 Hz</em></div><div class="vrow-desc">Regreso a la fuente.</div></div><div class="vrow-arrow">→</div></div>
+    <div class="vrow"><div class="vrow-sigil">🌟</div><div class="vrow-body"><div class="vrow-roman">CARTA V · 60 MIN</div><div class="vrow-title">Energía <em>Positiva</em></div><div class="vrow-desc">Paz, abundancia, éxito.</div></div><div class="vrow-arrow">→</div></div>
+    <div class="vrow"><div class="vrow-sigil">😇</div><div class="vrow-body"><div class="vrow-roman">CARTA VI · 60 MIN</div><div class="vrow-title">Ángeles & <em>Arcángeles</em></div><div class="vrow-desc">432 Hz · sanación de cuerpo y alma.</div></div><div class="vrow-arrow">→</div></div>
+  </div>
+
+  <div class="sigil"><span class="sigil-glyph">✦ ✧ ✦</span></div>
+
+  <div class="cat-title">Serie RA</div>
+  <div class="vlist" id="ra-list"></div>
+
+  <div class="footer-mark">✦ ✧ FIAT LUX ✧ ✦</div>
+</div>
+
+<script src="_sessions.js"></script>
+<script>
+  const romanNums = ['I','II','III','IV','V','VI','VII'];
+  const ra = SESSIONS.filter(s=>s.cat==='ra').map((s,i)=>{
+    const num = s.title.match(/RA (\d(?:\.\d)?)/)?.[1] || (i+1);
+    const name = s.title.split('· ')[1] || 'Activación';
+    return `<div class="vrow">
+      <div class="vrow-sigil">${s.emoji}</div>
+      <div class="vrow-body">
+        <div class="vrow-roman">RA ${num} · ${s.duration.toUpperCase()}</div>
+        <div class="vrow-title"><em>${name}</em></div>
+        <div class="vrow-desc">${s.desc}</div>
+      </div>
+      <div class="vrow-arrow">→</div>
+    </div>`;
+  }).join('');
+  document.getElementById('ra-list').innerHTML = ra;
+</script>
+</body>
+</html>

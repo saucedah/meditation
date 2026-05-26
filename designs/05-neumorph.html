@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Meditate · Neumorphism</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  :root{
+    --bg:#e8e3f3;
+    --bg-2:#e0daee;
+    --light:rgba(255,255,255,0.95);
+    --dark:rgba(154,140,196,0.45);
+    --ink:#2d2148;
+    --ink-2:#6e6388;
+    --ink-3:#a59cba;
+    --accent:#7c5cf2;
+    --accent-2:#a78bfa;
+    --shadow-out:-6px -6px 14px var(--light), 6px 6px 14px var(--dark);
+    --shadow-in:inset -4px -4px 8px var(--light), inset 4px 4px 8px var(--dark);
+    --shadow-soft:-3px -3px 8px var(--light), 3px 3px 8px var(--dark);
+  }
+  body{font-family:'Manrope',sans-serif;background:var(--bg);color:var(--ink);min-height:100dvh}
+  .wrap{max-width:480px;margin:0 auto;padding:24px 22px 60px}
+
+  .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px}
+  .greet{font-size:13px;color:var(--ink-2);font-weight:500}
+  .greet-name{font-size:24px;font-weight:700;letter-spacing:-0.4px;margin-top:3px;color:var(--ink)}
+  .avatar{
+    width:50px;height:50px;border-radius:50%;background:var(--bg);
+    box-shadow:var(--shadow-out);
+    display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;color:var(--accent);
+  }
+
+  /* search bar — pressed in */
+  .search{
+    background:var(--bg);border-radius:18px;padding:14px 18px;display:flex;align-items:center;gap:12px;margin-bottom:24px;
+    box-shadow:var(--shadow-in);
+  }
+  .search input{flex:1;border:none;background:transparent;font-family:inherit;font-size:15px;color:var(--ink);outline:none}
+  .search input::placeholder{color:var(--ink-3)}
+  .search svg{width:18px;height:18px;color:var(--ink-2)}
+
+  /* hero panel */
+  .hero{
+    background:var(--bg);border-radius:24px;padding:22px;margin-bottom:28px;
+    box-shadow:var(--shadow-out);
+    display:flex;align-items:center;gap:16px;
+  }
+  .hero-icon{
+    width:68px;height:68px;border-radius:20px;
+    background:linear-gradient(145deg,#a78bfa,#7c5cf2);
+    box-shadow:var(--shadow-soft);
+    display:flex;align-items:center;justify-content:center;color:#fff;font-size:32px;
+  }
+  .hero-body{flex:1;min-width:0}
+  .hero-eyebrow{font-size:11px;color:var(--accent);font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:5px}
+  .hero-title{font-size:18px;font-weight:700;line-height:1.2;color:var(--ink);margin-bottom:4px}
+  .hero-sub{font-size:13px;color:var(--ink-2);line-height:1.4}
+  .hero-cta{
+    width:48px;height:48px;border-radius:50%;background:var(--bg);
+    box-shadow:var(--shadow-out);
+    display:flex;align-items:center;justify-content:center;color:var(--accent);border:none;cursor:pointer;flex-shrink:0;
+  }
+  .hero-cta svg{width:18px;height:18px;fill:currentColor}
+
+  /* category pills */
+  .pills{display:flex;gap:10px;overflow-x:auto;padding:6px 2px;margin-bottom:22px;scrollbar-width:none}
+  .pills::-webkit-scrollbar{display:none}
+  .pill{
+    flex-shrink:0;border:none;background:var(--bg);color:var(--ink-2);font-family:inherit;font-size:13px;font-weight:600;
+    padding:10px 18px;border-radius:14px;cursor:pointer;white-space:nowrap;
+    box-shadow:var(--shadow-soft);
+  }
+  .pill.active{
+    color:#fff;background:linear-gradient(145deg,#8b6df5,#6c4ce0);
+    box-shadow:inset -2px -2px 6px rgba(0,0,0,0.15), inset 2px 2px 6px rgba(255,255,255,0.25);
+  }
+
+  .section{margin-bottom:30px}
+  .section-title{font-size:18px;font-weight:700;color:var(--ink);margin-bottom:14px;letter-spacing:-0.3px}
+
+  /* card grid 2-col */
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .ncard{
+    background:var(--bg);border-radius:22px;padding:18px;cursor:pointer;
+    box-shadow:var(--shadow-out);
+    display:flex;flex-direction:column;align-items:center;text-align:center;
+  }
+  .ncard:active{box-shadow:var(--shadow-in)}
+  .ncard-icon{
+    width:60px;height:60px;border-radius:50%;background:var(--bg);
+    box-shadow:var(--shadow-in);
+    display:flex;align-items:center;justify-content:center;font-size:28px;margin-bottom:12px;
+  }
+  .ncard-title{font-size:13.5px;font-weight:700;line-height:1.25;margin-bottom:5px;color:var(--ink);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .ncard-meta{font-size:11px;color:var(--ink-3);font-weight:600;letter-spacing:0.5px}
+
+  /* list rows */
+  .nlist{display:flex;flex-direction:column;gap:14px}
+  .nrow{
+    background:var(--bg);border-radius:18px;padding:14px;cursor:pointer;
+    box-shadow:var(--shadow-out);
+    display:flex;align-items:center;gap:14px;
+  }
+  .nrow:active{box-shadow:var(--shadow-in)}
+  .nrow-icon{
+    width:52px;height:52px;border-radius:16px;background:var(--bg);
+    box-shadow:var(--shadow-in);
+    display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;
+  }
+  .nrow-body{flex:1;min-width:0}
+  .nrow-title{font-size:14.5px;font-weight:700;line-height:1.2;color:var(--ink);margin-bottom:3px;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}
+  .nrow-desc{font-size:12px;color:var(--ink-2);line-height:1.4;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}
+  .nrow-meta{font-size:11px;color:var(--ink-3);font-weight:600;margin-top:3px}
+  .nrow-play{
+    width:38px;height:38px;border-radius:50%;background:var(--bg);
+    box-shadow:var(--shadow-soft);
+    display:flex;align-items:center;justify-content:center;border:none;cursor:pointer;color:var(--accent);flex-shrink:0;
+  }
+  .nrow-play svg{width:14px;height:14px;fill:currentColor}
+
+  /* bottom tab nav */
+  .tabbar{
+    position:fixed;left:12px;right:12px;bottom:14px;
+    background:var(--bg);border-radius:24px;padding:10px 14px;
+    box-shadow:var(--shadow-out);
+    display:flex;justify-content:space-around;align-items:center;
+    max-width:456px;margin:0 auto;z-index:50;
+  }
+  .tab-btn{background:none;border:none;cursor:pointer;color:var(--ink-3);padding:8px 12px;border-radius:14px;display:flex;flex-direction:column;align-items:center;gap:3px}
+  .tab-btn.active{color:var(--accent);background:var(--bg);box-shadow:var(--shadow-in)}
+  .tab-btn svg{width:20px;height:20px}
+  .tab-btn-label{font-size:10px;font-weight:700;letter-spacing:0.5px}
+
+  body{padding-bottom:90px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <div>
+      <div class="greet">Hola,</div>
+      <div class="greet-name">Evelyn ✿</div>
+    </div>
+    <div class="avatar">E</div>
+  </div>
+
+  <div class="search">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input type="search" placeholder="Buscar tu meditación…">
+  </div>
+
+  <div class="hero">
+    <div class="hero-icon">⑦</div>
+    <div class="hero-body">
+      <div class="hero-eyebrow">Continúa</div>
+      <div class="hero-title">RA 7 · Cámara del Corazón</div>
+      <div class="hero-sub">57 min · faltan 23:14</div>
+    </div>
+    <button class="hero-cta" aria-label="Reanudar">
+      <svg viewBox="0 0 24 24"><polygon points="6 4 20 12 6 20 6 4"/></svg>
+    </button>
+  </div>
+
+  <div class="pills">
+    <button class="pill active">Todos</button>
+    <button class="pill">Limpieza</button>
+    <button class="pill">Frecuencias</button>
+    <button class="pill">Serie RA</button>
+    <button class="pill">Otras</button>
+  </div>
+
+  <div class="section">
+    <h2 class="section-title">Frecuencias</h2>
+    <div class="grid" id="freq-grid"></div>
+  </div>
+
+  <div class="section">
+    <h2 class="section-title">Serie RA</h2>
+    <div class="nlist" id="ra-list"></div>
+  </div>
+</div>
+
+<nav class="tabbar">
+  <button class="tab-btn active">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+    <div class="tab-btn-label">Inicio</div>
+  </button>
+  <button class="tab-btn">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <div class="tab-btn-label">Buscar</div>
+  </button>
+  <button class="tab-btn">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+    <div class="tab-btn-label">Favoritos</div>
+  </button>
+  <button class="tab-btn">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+    <div class="tab-btn-label">Perfil</div>
+  </button>
+</nav>
+
+<script src="_sessions.js"></script>
+<script>
+  const freqs = SESSIONS.filter(s=>s.cat==='frequency').map(s=>`
+    <div class="ncard">
+      <div class="ncard-icon">${s.emoji}</div>
+      <div class="ncard-title">${s.title}</div>
+      <div class="ncard-meta">${s.duration}</div>
+    </div>
+  `).join('');
+  document.getElementById('freq-grid').innerHTML = freqs;
+
+  const ra = SESSIONS.filter(s=>s.cat==='ra').map(s=>`
+    <div class="nrow">
+      <div class="nrow-icon">${s.emoji}</div>
+      <div class="nrow-body">
+        <div class="nrow-title">${s.title}</div>
+        <div class="nrow-desc">${s.desc}</div>
+        <div class="nrow-meta">${s.duration}</div>
+      </div>
+      <button class="nrow-play" aria-label="Reproducir">
+        <svg viewBox="0 0 24 24"><polygon points="6 4 20 12 6 20 6 4"/></svg>
+      </button>
+    </div>
+  `).join('');
+  document.getElementById('ra-list').innerHTML = ra;
+</script>
+</body>
+</html>
