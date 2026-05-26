@@ -1,4 +1,4 @@
-const SHELL_CACHE = 'meditate-shell-v4';
+const SHELL_CACHE = 'meditate-shell-v5';
 const AUDIO_CACHE = 'meditate-audio-v1';
 const SHELL_ASSETS = ['./', './index.html', './manifest.json', './icon.svg'];
 
