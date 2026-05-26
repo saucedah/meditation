@@ -375,6 +375,18 @@
     background: none; border: none; color: var(--text-faint);
     cursor: pointer; font-size: 18px; line-height: 1;
   }
+  .install-banner-action {
+    background: linear-gradient(135deg, var(--accent) 0%, #8b66e0 100%);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 18px;
+    font-family: inherit; font-size: 13px; font-weight: 600;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    box-shadow: 0 4px 14px var(--accent-glow);
+  }
+  .install-banner-action:active { transform: scale(0.97); }
 
   .card-body { flex: 1; min-width: 0; }
   .card-title {
@@ -729,10 +741,16 @@
   <div class="mini-progress" id="mini-progress"></div>
 </div>
 
-<!-- iOS install hint (one-time) -->
+<!-- Install hint (one-time, iOS Safari or Chrome/Edge) -->
 <div id="install-banner" class="install-banner" role="status">
   <button class="install-banner-close" onclick="dismissInstallBanner()" aria-label="Cerrar">×</button>
-  <b>Instala Meditate</b> en tu iPhone: toca <b>Compartir</b> ⤴ y luego <b>Añadir a Inicio</b>.
+  <div id="install-text-ios" style="display:none">
+    <b>Instala Meditate</b> en tu iPhone: toca <b>Compartir</b> ⤴ y luego <b>Añadir a Inicio</b>.
+  </div>
+  <div id="install-text-chromium" style="display:none">
+    <div style="margin-bottom:10px;"><b>Instala Meditate</b> como app — se abrirá sin barra del navegador.</div>
+    <button class="install-banner-action" onclick="triggerNativeInstall()">Instalar app</button>
+  </div>
 </div>
 
 <script>
@@ -1355,16 +1373,59 @@ function updateMediaSession() {
   } catch {}
 }
 
-// ───── iOS install hint (one-time) ─────
+// ───── Install hint (iOS Safari manual + Chrome/Edge native) ─────
 const INSTALL_DISMISSED_KEY = 'meditate.installDismissed.v1';
+let deferredInstallPrompt = null;
+
+// Chrome/Edge/Android: capture the native prompt
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredInstallPrompt = e;
+  // Show banner with native install button (if not dismissed and not already standalone)
+  const standalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+  const dismissed = localStorage.getItem(INSTALL_DISMISSED_KEY) === '1';
+  if (!standalone && !dismissed) {
+    document.getElementById('install-text-chromium').style.display = '';
+    document.getElementById('install-text-ios').style.display = 'none';
+    setTimeout(() => document.getElementById('install-banner').classList.add('shown'), 800);
+  }
+});
+
+// Already-installed event — never show again
+window.addEventListener('appinstalled', () => {
+  document.getElementById('install-banner').classList.remove('shown');
+  try { localStorage.setItem(INSTALL_DISMISSED_KEY, '1'); } catch {}
+  deferredInstallPrompt = null;
+});
+
+async function triggerNativeInstall() {
+  if (!deferredInstallPrompt) return;
+  try {
+    deferredInstallPrompt.prompt();
+    const choice = await deferredInstallPrompt.userChoice;
+    deferredInstallPrompt = null;
+    document.getElementById('install-banner').classList.remove('shown');
+    if (choice.outcome === 'dismissed') {
+      // user dismissed native prompt — remember so we don't nag
+      try { localStorage.setItem(INSTALL_DISMISSED_KEY, '1'); } catch {}
+    }
+  } catch (e) { console.error(e); }
+}
+window.triggerNativeInstall = triggerNativeInstall;
+
+// iOS Safari fallback (no beforeinstallprompt support)
 function maybeShowInstallBanner() {
   const standalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
-  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
   const dismissed = localStorage.getItem(INSTALL_DISMISSED_KEY) === '1';
   if (isIOS && !standalone && !dismissed) {
+    document.getElementById('install-text-ios').style.display = '';
+    document.getElementById('install-text-chromium').style.display = 'none';
     setTimeout(() => document.getElementById('install-banner').classList.add('shown'), 1200);
   }
+  // Chrome/Edge/Android: the banner appears via beforeinstallprompt handler above
 }
+
 function dismissInstallBanner() {
   document.getElementById('install-banner').classList.remove('shown');
   try { localStorage.setItem(INSTALL_DISMISSED_KEY, '1'); } catch {}
