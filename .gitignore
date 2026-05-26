@@ -1,0 +1,9 @@
+# Source materials (not deployed)
+audio/*.mp4
+audio/*.transcript.json
+
+# Working files
+work/
+.venv/
+__pycache__/
+*.pyc
