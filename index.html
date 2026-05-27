@@ -39,6 +39,7 @@
     --c-frequency: #ffb86b;
     --c-ra: #ff80c0;
     --c-extracts: #7eecc0;
+    --c-camara: #ff6b9d;
   }
 
   html { -webkit-text-size-adjust: 100%; font-size: 17px; }
@@ -166,6 +167,7 @@
   .card-icon.cat-frequency { background: linear-gradient(135deg, rgba(255,184,107,0.4), rgba(255,184,107,0.08)); }
   .card-icon.cat-ra        { background: linear-gradient(135deg, rgba(255,128,192,0.4), rgba(255,128,192,0.08)); }
   .card-icon.cat-extracts  { background: linear-gradient(135deg, rgba(126,236,192,0.4), rgba(126,236,192,0.08)); }
+  .card-icon.cat-camara    { background: linear-gradient(135deg, rgba(255,107,157,0.4), rgba(255,107,157,0.08)); }
 
   /* Download button on card */
   .card-dl {
@@ -767,6 +769,7 @@ const CATEGORIES = [
   { id: 'cleansing',  label: 'Limpieza & Sanación',      color: 'var(--c-cleansing)' },
   { id: 'frequency',  label: 'Frecuencias',                color: 'var(--c-frequency)' },
   { id: 'ra',         label: 'Records Akashicos',         color: 'var(--c-ra)' },
+  { id: 'camara',     label: 'Cámara del Corazón',        color: 'var(--c-camara)' },
   { id: 'extracts',   label: 'Otras Meditaciones',        color: 'var(--c-extracts)' },
 ];
 
@@ -781,6 +784,10 @@ const SESSIONS = [
     title: 'Meditación Cuántica',
     desc: 'Viaje al interior con el método Wim Hof.',
     file: 'audio/wim-hof.mp3', duration: '23m' },
+  { id: 'arcturiano', cat: 'cleansing', emoji: '🛸',
+    title: 'Limpieza Arcturiana',
+    desc: 'Audio breve de limpieza energética con tecnología Arcturiana.',
+    file: 'audio/limpieza-arcturiano.mp3', duration: '12m' },
 
   // Frequencies
   { id: 'third-eye', cat: 'frequency', emoji: '👁️',
@@ -833,6 +840,12 @@ const SESSIONS = [
     title: '7 · Cámara del Corazón',
     desc: 'Entrada a la Cámara Sagrada del Corazón.',
     file: 'audio/ra-7-camara-corazon.mp3', duration: '57m' },
+
+  // Cámara del Corazón (workshop "g6 nov")
+  { id: 'trampolin', cat: 'camara', emoji: '🌊',
+    title: 'Audio Trampolín',
+    desc: 'Pista instrumental de fondo para meditación profunda.',
+    file: 'audio/trampolin.mp3', duration: '3h 03m' },
 
   // Otras meditaciones (extracted from class recordings)
   { id: 'meditacion-consciente', cat: 'extracts', emoji: '🌌',
