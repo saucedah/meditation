@@ -40,6 +40,7 @@
     --c-ra: #ff80c0;
     --c-extracts: #7eecc0;
     --c-camara: #ff6b9d;
+    --c-nuevas: #5ad1c8;
   }
 
   html { -webkit-text-size-adjust: 100%; font-size: 17px; }
@@ -168,6 +169,7 @@
   .card-icon.cat-ra        { background: linear-gradient(135deg, rgba(255,128,192,0.4), rgba(255,128,192,0.08)); }
   .card-icon.cat-extracts  { background: linear-gradient(135deg, rgba(126,236,192,0.4), rgba(126,236,192,0.08)); }
   .card-icon.cat-camara    { background: linear-gradient(135deg, rgba(255,107,157,0.4), rgba(255,107,157,0.08)); }
+  .card-icon.cat-nuevas    { background: linear-gradient(135deg, rgba(90,209,200,0.4), rgba(90,209,200,0.08)); }
 
   /* Download button on card */
   .card-dl {
@@ -771,6 +773,7 @@ const CATEGORIES = [
   { id: 'ra',         label: 'Records Akashicos',         color: 'var(--c-ra)' },
   { id: 'camara',     label: 'Cámara del Corazón',        color: 'var(--c-camara)' },
   { id: 'extracts',   label: 'Otras Meditaciones',        color: 'var(--c-extracts)' },
+  { id: 'nuevas',     label: 'Registros Akáshicos (Nuevas)', color: 'var(--c-nuevas)' },
 ];
 
 const SESSIONS = [
@@ -888,6 +891,40 @@ const SESSIONS = [
     title: 'Activación de la Glándula Pineal',
     desc: 'Visualización numérica y descalcificación; apertura de claris.',
     file: 'audio/activation-pineal.mp3', duration: '10m' },
+
+  // Registros Akáshicos (Nuevas) — taller WhatsApp 29 may 2026
+  { id: 'na-akashicos', cat: 'nuevas', emoji: '①',
+    title: 'Registros Akáshicos · El Portal',
+    desc: 'Cruce del portal y encuentro con tus maestros y guías dentro de tu akasha.',
+    file: 'audio/na-registros-akashicos.mp3', duration: '45m' },
+  { id: 'na-tercer-ojo', cat: 'nuevas', emoji: '②',
+    title: 'Activación del Tercer Ojo',
+    desc: 'Activación de la glándula pineal con el mantra Kantak; conexión con la memoria del alma.',
+    file: 'audio/na-tercer-ojo.mp3', duration: '30m' },
+  { id: 'na-chakras', cat: 'nuevas', emoji: '③',
+    title: 'Sanación de Chakras',
+    desc: 'Recorrido de luz dorada por cada chakra, soltando rencores y bloqueos.',
+    file: 'audio/na-chakras.mp3', duration: '24m' },
+  { id: 'na-chakras-corta', cat: 'nuevas', emoji: '④',
+    title: 'Sanación de Chakras · Corta',
+    desc: 'Versión breve del recorrido de luz dorada por los chakras.',
+    file: 'audio/na-chakras-corta.mp3', duration: '18m' },
+  { id: 'na-cuerpos-completa', cat: 'nuevas', emoji: '⑤',
+    title: 'Cuerpos Sutiles · Completa',
+    desc: 'Purificación y activación de todos los cuerpos sutiles con mantras (versión larga).',
+    file: 'audio/na-cuerpos-completa.mp3', duration: '48m' },
+  { id: 'na-cuerpos-1', cat: 'nuevas', emoji: '⑥',
+    title: 'Cuerpos Sutiles · Mantra RAM',
+    desc: 'Trabajo con el cuerpo astral y emocional mediante el mantra RAM.',
+    file: 'audio/na-cuerpos-1.mp3', duration: '34m' },
+  { id: 'na-cuerpos-2', cat: 'nuevas', emoji: '⑦',
+    title: 'Cuerpos Sutiles · Astral',
+    desc: 'Conexión y separación consciente del cuerpo astral.',
+    file: 'audio/na-cuerpos-2.mp3', duration: '35m' },
+  { id: 'na-cuerpos-3', cat: 'nuevas', emoji: '⑧',
+    title: 'Cuerpos Sutiles · Mantra PAM',
+    desc: 'Purificación del cuerpo emocional con el mantra PAM.',
+    file: 'audio/na-cuerpos-3.mp3', duration: '27m' },
 ];
 
 const sessionsById = Object.fromEntries(SESSIONS.map(s => [s.id, s]));
