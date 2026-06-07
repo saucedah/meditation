@@ -109,6 +109,41 @@
     font-size: 13px; letter-spacing: 3px; text-transform: uppercase;
   }
 
+  /* Home tabs (Todas / Favoritos) */
+  .home-tabs {
+    display: flex; gap: 6px;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 999px;
+    padding: 5px;
+    margin: 0 0 24px;
+    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  }
+  .home-tab {
+    flex: 1;
+    border: none; background: transparent;
+    color: var(--text-dim);
+    font-size: 15px; font-weight: 600;
+    padding: 11px 12px; border-radius: 999px;
+    cursor: pointer; transition: background 0.2s, color 0.2s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .home-tab:not(.is-active):hover { color: var(--text); }
+  .home-tab:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .home-tab.is-active {
+    background: var(--accent);
+    color: #1a0e2e;
+    box-shadow: 0 4px 16px var(--accent-glow);
+  }
+
+  /* Empty favorites state */
+  .empty-favs {
+    text-align: center; color: var(--text-dim);
+    padding: 56px 24px; font-size: 15px; line-height: 1.65;
+  }
+  .empty-favs .big { font-size: 44px; display: block; margin-bottom: 14px; }
+  .empty-favs .hint { color: var(--text-faint); font-size: 13.5px; margin-top: 6px; }
+
   /* Categories */
   .category {
     margin-bottom: 32px;
@@ -218,6 +253,79 @@
     stroke-dashoffset: 119.4;
     transition: stroke-dashoffset 0.18s linear;
   }
+
+  /* ───── Favorite (heart) button on card ───── */
+  .card-fav {
+    width: 44px; height: 44px;
+    flex-shrink: 0;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 50%;
+    color: var(--text-faint);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: color 0.2s, background 0.2s, transform 0.15s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .card-fav:hover { color: var(--text-dim); background: var(--card-bg-hover); }
+  .card-fav:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .card-fav svg { width: 20px; height: 20px; fill: none; transition: fill 0.2s, stroke 0.2s; }
+  .card-fav.is-fav { color: #ff5c8a; }
+  .card-fav.is-fav svg { fill: #ff5c8a; stroke: #ff5c8a; }
+  .card-fav.just-toggled { animation: heart-pop 0.32s ease; }
+  @keyframes heart-pop {
+    0% { transform: scale(1); }
+    40% { transform: scale(1.32); }
+    100% { transform: scale(1); }
+  }
+
+  /* ───── Reading screen (prayer) ───── */
+  .reading { max-width: 680px; margin: 0 auto; padding: 8px 0 60px; }
+  .reading-topbar { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+  .reading h2 {
+    font-size: 26px; font-weight: 700; line-height: 1.2;
+    margin: 6px 0 2px; letter-spacing: -0.01em;
+  }
+  .reading-sub { color: var(--text-dim); font-size: 14px; margin: 0 0 20px; }
+  .prayer-block {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 18px;
+    padding: 20px 20px 18px;
+    margin: 0 0 18px;
+    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  }
+  .prayer-block h3 {
+    font-size: 18px; font-weight: 700; margin: 0 0 4px;
+    color: var(--accent);
+  }
+  .prayer-stage {
+    font-size: 12.5px; text-transform: uppercase; letter-spacing: 0.06em;
+    color: var(--text-faint); margin: 14px 0 6px; font-weight: 600;
+  }
+  .prayer-stage:first-of-type { margin-top: 10px; }
+  .prayer-text { font-size: 17px; line-height: 1.62; color: var(--text); margin: 0 0 4px; white-space: pre-line; }
+  .prayer-text em { color: var(--accent); font-style: italic; }
+  .prayer-orig { font-size: 15px; line-height: 1.55; color: var(--text-dim); margin: 4px 0 0; white-space: pre-line; }
+  .prayer-orig.collapsed { display: none; }
+  .prayer-toggle {
+    background: transparent; border: 1px solid var(--card-border);
+    color: var(--text-dim); font-size: 13px; font-weight: 600;
+    border-radius: 999px; padding: 7px 14px; cursor: pointer; margin-top: 8px;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .prayer-toggle:hover { background: var(--card-bg-hover); color: var(--text); }
+  .prayer-note {
+    font-size: 13.5px; line-height: 1.5; color: var(--text-faint);
+    background: rgba(255,255,255,0.03); border-radius: 12px; padding: 12px 14px; margin: 0 0 18px;
+  }
+  .pdf-link {
+    display: inline-flex; align-items: center; gap: 8px;
+    color: var(--accent); text-decoration: none; font-size: 14px; font-weight: 600;
+    border: 1px solid var(--card-border); border-radius: 999px; padding: 9px 16px;
+  }
+  .pdf-link:hover { background: var(--card-bg-hover); }
+  .pdf-link svg { width: 16px; height: 16px; }
 
   /* ───── Continue / hero row ───── */
   .continue-row {
@@ -642,6 +750,13 @@
       <p>Find your inner peace</p>
     </div>
 
+    <div class="home-tabs" role="tablist" aria-label="Filtro">
+      <button class="home-tab is-active" role="tab" data-filter="all"
+        aria-selected="true" onclick="setHomeFilter('all')">Todas</button>
+      <button class="home-tab" role="tab" data-filter="favs"
+        aria-selected="false" onclick="setHomeFilter('favs')">❤️ Favoritos</button>
+    </div>
+
     <div id="continue-host"></div>
     <div id="categories-host"></div>
   </div>
@@ -733,6 +848,106 @@
   </div>
 </div>
 
+<!-- PRAYER / READING -->
+<div id="prayer" class="screen">
+  <div class="reading">
+    <div class="reading-topbar">
+      <button class="icon-btn" onclick="showScreen('home')" aria-label="Volver al inicio">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polyline points="15 18 9 12 15 6"/>
+        </svg>
+      </button>
+    </div>
+
+    <h2>Oración del Sendero</h2>
+    <p class="reading-sub">Proceso de oración para abrir y cerrar los Registros Akáshicos · Linda Howe</p>
+
+    <p class="prayer-note">Donde aparece <em>(tu nombre legal completo)</em>, di tu nombre legal actual. Esta oración es para leerte a ti mismo/a.</p>
+
+    <!-- OPENING -->
+    <div class="prayer-block">
+      <h3>Oración de Apertura</h3>
+
+      <div class="prayer-stage">Di toda esta parte en voz alta</div>
+      <p class="prayer-text">Y así reconocemos las Fuerzas de Luz,
+pidiendo guía, dirección y valor para conocer la Verdad
+tal como se revela para nuestro mayor bien y el mayor bien de todos los que están conectados con nosotros.
+Oh, Santo Espíritu de Dios,
+protégeme de toda forma de egocentrismo,
+y dirige mi atención al trabajo presente.
+Ayúdame a conocerme en la Luz de los Registros Akáshicos,
+a verme a través de los ojos de los Señores de los Registros,
+y permíteme compartir la sabiduría y la compasión que los Maestros, Instructores y Seres Queridos tienen para mí.</p>
+
+      <div class="prayer-stage">Lee esta parte en silencio para ti mismo/a</div>
+      <p class="prayer-text">Ayúdame a conocer a <em>(tu nombre legal completo)</em> en la Luz de los Registros Akáshicos,
+a ver a <em>(tu nombre legal completo)</em> a través de los ojos de los Señores de los Registros,
+y permíteme compartir la sabiduría y la compasión que los Maestros, Instructores y Seres Queridos de <em>(tu nombre legal completo)</em> tienen para mí.
+Ayúdame a conocer a <em>(tu nombre legal completo)</em> en la Luz de los Registros Akáshicos,
+a ver a <em>(tu nombre legal completo)</em> a través de los ojos de los Señores de los Registros,
+y permíteme compartir la sabiduría y la compasión que los Maestros, Instructores y Seres Queridos de <em>(tu nombre legal completo)</em> tienen para mí.</p>
+
+      <div class="prayer-stage">Anuncia la apertura en voz alta</div>
+      <p class="prayer-text">Los Registros están ahora abiertos.</p>
+
+      <button class="prayer-toggle" type="button" onclick="togglePrayerOrig(this)">Ver texto original (inglés)</button>
+      <div class="prayer-orig collapsed">
+        <div class="prayer-stage">Say this whole part aloud</div>
+        <p class="prayer-orig" style="display:block">And so we do acknowledge the Forces of Light,
+Asking for guidance, direction, and courage to know the Truth
+as it is revealed for our highest good and the highest good of everyone connected to us.
+Oh, Holy Spirit of God,
+Protect me from all forms of self-centeredness,
+and direct my attention to the work at hand.
+Help me to know myself in the Light of the Akashic Records,
+To see myself through the eyes of the Lords of the Records,
+And enable me to share the wisdom and compassion that the Masters, Teachers, and Loved Ones of me have for me.</p>
+        <div class="prayer-stage">Read this part silently to yourself</div>
+        <p class="prayer-orig" style="display:block">Help me to know (your current legal name) in the Light of the Akashic Records,
+To see (your current legal name) through the eyes of the Lords of the Records,
+And enable me to share the wisdom and compassion that the Masters, Teachers, and Loved Ones of (your current legal name) have for me.
+Help me to know (your current legal name) in the Light of the Akashic Records,
+To see (your current legal name) through the eyes of the Lords of the Records,
+And enable me to share the wisdom and compassion that the Masters, Teachers, and Loved Ones of (your current legal name) have for me.</p>
+        <div class="prayer-stage">Announce aloud</div>
+        <p class="prayer-orig" style="display:block">The Records are now open.</p>
+      </div>
+    </div>
+
+    <!-- CLOSING -->
+    <div class="prayer-block">
+      <h3>Oración de Cierre</h3>
+
+      <div class="prayer-stage">Di esta parte en voz alta</div>
+      <p class="prayer-text">Quiero agradecer a los Maestros, Instructores y Seres Queridos por su amor y compasión.
+Quiero agradecer a los Señores de los Registros Akáshicos por su punto de vista.
+Y quiero agradecer al Santo Espíritu de Luz por todo el conocimiento y la sanación.
+Los Registros están ahora cerrados. Amén.
+Los Registros están ahora cerrados. Amén.
+Los Registros están ahora cerrados. Amén.</p>
+
+      <button class="prayer-toggle" type="button" onclick="togglePrayerOrig(this)">Ver texto original (inglés)</button>
+      <div class="prayer-orig collapsed">
+        <div class="prayer-stage">Say this part aloud</div>
+        <p class="prayer-orig" style="display:block">I would like to thank the Masters, Teachers, and Loved Ones for their love and compassion.
+I would like to thank the Lords of the Akashic Records for their point of view.
+And I would like to thank the Holy Spirit of Light for all knowledge and healing.
+The Records are now closed. Amen.
+The Records are now closed. Amen.
+The Records are now closed. Amen.</p>
+      </div>
+    </div>
+
+    <a class="pdf-link" href="oracion-registros-akashicos.pdf" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+        <polyline points="14 2 14 8 20 8"/>
+      </svg>
+      Descargar PDF original
+    </a>
+  </div>
+</div>
+
 <!-- Breathing dot (shown during playback) -->
 <div class="breath-dot" aria-hidden="true"></div>
 
@@ -776,6 +991,11 @@ const CATEGORIES = [
   { id: 'nuevas',     label: 'Registros Akáshicos (Nuevas)', color: 'var(--c-nuevas)' },
 ];
 
+// Large tracks (>25 MiB) are served from R2 via a Worker that supports HTTP
+// byte ranges — Cloudflare Pages doesn't, which made iOS hang. These stay at
+// full source bitrate (no re-encoding); small tracks remain on Pages.
+const R2_AUDIO = 'https://meditation-audio.saucedah.workers.dev/';
+
 const SESSIONS = [
   // Cleansing
   { id: 'limpieza',  cat: 'cleansing', emoji: '✨',
@@ -796,19 +1016,19 @@ const SESSIONS = [
   { id: 'third-eye', cat: 'frequency', emoji: '👁️',
     title: 'Tercer Ojo',
     desc: '963 + 852 + 639 Hz · glándula pineal y chakra del corazón.',
-    file: 'audio/third-eye.mp3', duration: '71m' },
+    file: R2_AUDIO + 'third-eye.mp3', duration: '71m' },
   { id: 'oneness',   cat: 'frequency', emoji: '🕉️',
     title: 'Unidad',
     desc: '963 Hz · regreso a la fuente.',
-    file: 'audio/oneness.mp3', duration: '63m' },
+    file: R2_AUDIO + 'oneness.mp3', duration: '63m' },
   { id: 'positive',  cat: 'frequency', emoji: '🌟',
     title: 'Energía Positiva',
     desc: 'Atrae paz, abundancia y éxito.',
-    file: 'audio/positive-energy.mp3', duration: '60m' },
+    file: R2_AUDIO + 'positive-energy.mp3', duration: '60m' },
   { id: 'angels',    cat: 'frequency', emoji: '😇',
     title: 'Ángeles & Arcángeles',
     desc: '432 Hz · sanación de cuerpo, alma y espíritu.',
-    file: 'audio/angels.mp3', duration: '60m' },
+    file: R2_AUDIO + 'angels.mp3', duration: '60m' },
 
   // RA Series
   { id: 'ra-1',      cat: 'ra', emoji: '①',
@@ -842,13 +1062,13 @@ const SESSIONS = [
   { id: 'ra-7',      cat: 'ra', emoji: '⑦',
     title: '7 · Cámara del Corazón',
     desc: 'Entrada a la Cámara Sagrada del Corazón.',
-    file: 'audio/ra-7-camara-corazon.mp3', duration: '57m' },
+    file: R2_AUDIO + 'ra-7-camara-corazon.mp3', duration: '57m' },
 
   // Cámara del Corazón (workshop "g6 nov")
   { id: 'trampolin', cat: 'camara', emoji: '🌊',
     title: 'Audio Trampolín',
     desc: 'Pista instrumental de fondo para meditación profunda.',
-    file: 'audio/trampolin.mp3', duration: '3h 03m' },
+    file: R2_AUDIO + 'trampolin.mp3', duration: '3h 03m' },
   { id: 'camara-2', cat: 'camara', emoji: '②',
     title: 'Clase 2 · Posición Cómoda',
     desc: 'Meditación guiada — pónganse en una posición cómoda; ejercicio corporal.',
@@ -882,7 +1102,7 @@ const SESSIONS = [
   { id: 'sanacion-vidas-pasadas', cat: 'extracts', emoji: '🌀',
     title: 'Sanación de Vidas Pasadas',
     desc: 'Visualización dentro de una gran pirámide; inundación de luz dorada.',
-    file: 'audio/sanacion-vidas-pasadas.mp3', duration: '60m' },
+    file: R2_AUDIO + 'sanacion-vidas-pasadas.mp3', duration: '60m' },
   { id: 'cuerpos-sutiles', cat: 'extracts', emoji: '🔮',
     title: 'Activación de Cuerpos Sutiles',
     desc: 'Activación con mantras de los 12 cuerpos hasta el yo soy.',
@@ -925,89 +1145,209 @@ const SESSIONS = [
     title: 'Cuerpos Sutiles · Mantra PAM',
     desc: 'Purificación del cuerpo emocional con el mantra PAM.',
     file: 'audio/na-cuerpos-3.mp3', duration: '27m' },
+
+  // Oración del Sendero — narración (Linda Howe)
+  { id: 'na-oracion-akashicos', cat: 'nuevas', emoji: '📖',
+    title: 'Oración del Sendero',
+    desc: 'Oración de apertura y cierre de los Registros Akáshicos, narrada (Linda Howe).',
+    file: 'audio/na-oracion-akashicos.mp3', duration: '2m' },
+  { id: 'na-oracion-akashicos-en', cat: 'nuevas', emoji: '📖',
+    title: 'Pathway Prayer · English',
+    desc: 'Opening & closing prayer to access the Akashic Records, narrated (Linda Howe).',
+    file: 'audio/na-oracion-akashicos-en.mp3', duration: '2m' },
 ];
 
 const sessionsById = Object.fromEntries(SESSIONS.map(s => [s.id, s]));
 
+// ───── Favorites (per-device, localStorage) ─────
+const FAV_KEY = 'meditate.favorites.v1';
+function loadFavs() {
+  try { return new Set(JSON.parse(localStorage.getItem(FAV_KEY) || '[]')); }
+  catch { return new Set(); }
+}
+function saveFavs(set) {
+  try { localStorage.setItem(FAV_KEY, JSON.stringify([...set])); } catch {}
+}
+function isFav(id) { return loadFavs().has(id); }
+function toggleFav(id) {
+  const set = loadFavs();
+  if (set.has(id)) set.delete(id); else set.add(id);
+  saveFavs(set);
+  return set.has(id);
+}
+function onFavClick(ev) {
+  ev.stopPropagation();
+  const btn = ev.currentTarget;
+  const id = btn.dataset.session;
+  const nowFav = toggleFav(id);
+  // Update every heart button for this session (card may appear in Favoritos + its category).
+  for (const b of document.querySelectorAll(`.card-fav[data-session="${id}"]`)) {
+    b.classList.toggle('is-fav', nowFav);
+    b.setAttribute('aria-pressed', String(nowFav));
+    b.setAttribute('aria-label', nowFav ? 'Quitar de favoritos' : 'Marcar como favorito');
+  }
+  btn.classList.remove('just-toggled');
+  void btn.offsetWidth;       // restart pop animation
+  btn.classList.add('just-toggled');
+  // Rebuild so the Favoritos section appears/updates/disappears live.
+  renderCategories();
+}
+
 // ───── RENDER ─────
+const HEART_SVG = `<svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 1 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>`;
+
+const DL_BTN_SVG = `
+  <svg class="dl-ring" viewBox="0 0 44 44" aria-hidden="true">
+    <circle class="track"></circle>
+    <circle class="fill"></circle>
+  </svg>
+  <svg class="dl-icon-cloud" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+    <polyline points="7 10 12 15 17 10"/>
+    <line x1="12" y1="15" x2="12" y2="3"/>
+  </svg>
+  <svg class="dl-icon-spinner" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/>
+    <line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/>
+    <line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/>
+    <line x1="4.93" y1="19.07" x2="7.76" y2="16.24"/><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"/>
+  </svg>
+  <svg class="dl-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <polyline points="20 6 9 17 4 12"/>
+  </svg>
+  <svg class="dl-icon-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <polyline points="3 6 5 6 21 6"/>
+    <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+    <path d="M10 11v6M14 11v6"/>
+    <path d="M9 6V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/>
+  </svg>`;
+
+// Build one meditation card (also handles the special 'reading' entry).
+function makeCard(s) {
+  const wrap = document.createElement('div');
+  wrap.className = 'card';
+  wrap.setAttribute('role', 'button');
+  wrap.tabIndex = 0;
+
+  if (s.type === 'reading') {
+    const open = () => showPrayer();
+    wrap.addEventListener('click', open);
+    wrap.addEventListener('keydown', ev => {
+      if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); open(); }
+    });
+    wrap.innerHTML = `
+      <span class="card-icon cat-${s.cat}" aria-hidden="true">${s.emoji}</span>
+      <div class="card-body">
+        <div class="card-title">${s.title}</div>
+        <div class="card-desc">${s.desc}</div>
+        <div class="card-meta">${s.duration}</div>
+      </div>`;
+    return wrap;
+  }
+
+  wrap.addEventListener('click', ev => {
+    if (ev.target.closest('.card-dl') || ev.target.closest('.card-fav')) return;
+    selectSession(s.id);
+  });
+  wrap.addEventListener('keydown', ev => {
+    if ((ev.key === 'Enter' || ev.key === ' ') &&
+        !ev.target.closest('.card-dl') && !ev.target.closest('.card-fav')) {
+      ev.preventDefault();
+      selectSession(s.id);
+    }
+  });
+  const faved = isFav(s.id);
+  wrap.innerHTML = `
+    <span class="card-icon cat-${s.cat}" aria-hidden="true">${s.emoji}</span>
+    <div class="card-body">
+      <div class="card-title">${s.title}</div>
+      <div class="card-desc">${s.desc}</div>
+      <div class="card-meta">${s.duration}</div>
+    </div>
+    <button class="card-fav ${faved ? 'is-fav' : ''}" type="button"
+      data-session="${s.id}" aria-pressed="${faved}"
+      aria-label="${faved ? 'Quitar de favoritos' : 'Marcar como favorito'}">
+      ${HEART_SVG}
+    </button>
+    <button class="card-dl is-idle" type="button"
+      data-session="${s.id}" aria-label="Descargar para offline">
+      ${DL_BTN_SVG}
+    </button>`;
+  return wrap;
+}
+
+let homeFilter = 'all'; // 'all' | 'favs'
+
+function setHomeFilter(f) {
+  homeFilter = f;
+  for (const tab of document.querySelectorAll('.home-tab')) {
+    const active = tab.dataset.filter === f;
+    tab.classList.toggle('is-active', active);
+    tab.setAttribute('aria-selected', String(active));
+  }
+  // "Continue" hero only belongs on the All tab.
+  const cont = document.getElementById('continue-host');
+  if (cont) cont.style.display = (f === 'favs') ? 'none' : '';
+  renderCategories();
+  window.scrollTo(0, 0);
+}
+
 function renderCategories() {
   const host = document.getElementById('categories-host');
   host.innerHTML = '';
 
-  for (const cat of CATEGORIES) {
-    const items = SESSIONS.filter(s => s.cat === cat.id);
-    if (items.length === 0) continue;
-
-    const section = document.createElement('section');
-    section.className = 'category';
-    section.style.setProperty('--cat-color', cat.color);
-    section.innerHTML = `
-      <div class="category-header">
-        <span class="category-dot"></span>
-        <span class="category-title">${cat.label}</span>
-        <span class="category-count">${items.length}</span>
-      </div>
-      <div class="cards"></div>
-    `;
-    const cards = section.querySelector('.cards');
-    for (const s of items) {
-      const wrap = document.createElement('div');
-      wrap.className = 'card';
-      wrap.setAttribute('role', 'button');
-      wrap.tabIndex = 0;
-      wrap.addEventListener('click', ev => {
-        if (ev.target.closest('.card-dl')) return; // download button has its own handler
-        selectSession(s.id);
-      });
-      wrap.addEventListener('keydown', ev => {
-        if ((ev.key === 'Enter' || ev.key === ' ') && !ev.target.closest('.card-dl')) {
-          ev.preventDefault();
-          selectSession(s.id);
-        }
-      });
-      wrap.innerHTML = `
-        <span class="card-icon cat-${cat.id}" aria-hidden="true">${s.emoji}</span>
-        <div class="card-body">
-          <div class="card-title">${s.title}</div>
-          <div class="card-desc">${s.desc}</div>
-          <div class="card-meta">${s.duration}</div>
+  if (homeFilter === 'favs') {
+    const favItems = SESSIONS.filter(s => s.type !== 'reading' && isFav(s.id));
+    if (!favItems.length) {
+      host.innerHTML = `
+        <div class="empty-favs">
+          <span class="big" aria-hidden="true">🤍</span>
+          Aún no tienes favoritos.
+          <div class="hint">Toca el corazón ❤️ en cualquier meditación para guardarla aquí.</div>
+        </div>`;
+    } else {
+      const fav = document.createElement('section');
+      fav.className = 'category';
+      fav.style.setProperty('--cat-color', '#ff5c8a');
+      fav.innerHTML = `
+        <div class="category-header">
+          <span class="category-dot"></span>
+          <span class="category-title">❤️ Tus Favoritos</span>
+          <span class="category-count">${favItems.length}</span>
         </div>
-        <button class="card-dl is-idle" type="button"
-          data-session="${s.id}" aria-label="Descargar para offline">
-          <svg class="dl-ring" viewBox="0 0 44 44" aria-hidden="true">
-            <circle class="track"></circle>
-            <circle class="fill"></circle>
-          </svg>
-          <svg class="dl-icon-cloud" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-            <polyline points="7 10 12 15 17 10"/>
-            <line x1="12" y1="15" x2="12" y2="3"/>
-          </svg>
-          <svg class="dl-icon-spinner" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/>
-            <line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/>
-            <line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/>
-            <line x1="4.93" y1="19.07" x2="7.76" y2="16.24"/><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"/>
-          </svg>
-          <svg class="dl-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <polyline points="20 6 9 17 4 12"/>
-          </svg>
-          <svg class="dl-icon-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <polyline points="3 6 5 6 21 6"/>
-            <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
-            <path d="M10 11v6M14 11v6"/>
-            <path d="M9 6V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/>
-          </svg>
-        </button>
-      `;
-      cards.appendChild(wrap);
+        <div class="cards"></div>`;
+      const fcards = fav.querySelector('.cards');
+      for (const s of favItems) fcards.appendChild(makeCard(s));
+      host.appendChild(fav);
     }
-    host.appendChild(section);
+  } else {
+    for (const cat of CATEGORIES) {
+      const items = SESSIONS.filter(s => s.cat === cat.id);
+      if (items.length === 0) continue;
+
+      const section = document.createElement('section');
+      section.className = 'category';
+      section.style.setProperty('--cat-color', cat.color);
+      section.innerHTML = `
+        <div class="category-header">
+          <span class="category-dot"></span>
+          <span class="category-title">${cat.label}</span>
+          <span class="category-count">${items.length}</span>
+        </div>
+        <div class="cards"></div>
+      `;
+      const cards = section.querySelector('.cards');
+      for (const s of items) cards.appendChild(makeCard(s));
+      host.appendChild(section);
+    }
   }
 
-  // Wire download buttons + reflect cached state
+  // Wire download + favorite buttons, reflect cached state.
   for (const btn of host.querySelectorAll('.card-dl')) {
     btn.addEventListener('click', onDownloadClick);
+  }
+  for (const btn of host.querySelectorAll('.card-fav')) {
+    btn.addEventListener('click', onFavClick);
   }
   refreshDownloadStates();
 }
@@ -1025,6 +1365,18 @@ const SLEEP_STEPS = [0, 10 * 60, 20 * 60, 30 * 60, 45 * 60, 60 * 60]; // seconds
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
+}
+
+function showPrayer() {
+  showScreen('prayer');
+  window.scrollTo(0, 0);
+}
+
+function togglePrayerOrig(btn) {
+  const box = btn.nextElementSibling;
+  if (!box) return;
+  const collapsed = box.classList.toggle('collapsed');
+  btn.textContent = collapsed ? 'Ver texto original (inglés)' : 'Ocultar texto original';
 }
 
 function fmt(seconds) {
@@ -1345,6 +1697,7 @@ async function refreshDownloadStates() {
   try {
     const cache = await caches.open(AUDIO_CACHE_NAME);
     for (const s of SESSIONS) {
+      if (!s.file) continue;
       const match = await cache.match(s.file);
       if (match && dlState.get(s.id) !== 'cached') {
         dlState.set(s.id, 'cached');

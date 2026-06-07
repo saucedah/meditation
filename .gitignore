@@ -7,3 +7,7 @@ work/
 .venv/
 __pycache__/
 *.pyc
+
+# Wrangler local cache / Miniflare R2 sim (can hold GBs of local blobs)
+.wrangler/
+r2-worker/node_modules/
