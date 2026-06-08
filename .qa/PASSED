@@ -1,0 +1,9 @@
+QA gates passed: 2026-06-08T03:53:19Z
+Commit: 42f020410f0d3b89d56cb91de3a3ad143e024656
+App: meditation (static PWA, Cloudflare Pages)
+
+Gate 1 Functional: PASS — sw.js + inline JS parse clean; 206-synthesis & R2 passthrough intact; manifest valid JSON; tags balanced.
+Gate 2 Security:   PASS — no secrets in deployed files; no eval/Function; scoped CSP (fonts + R2 audio worker); X-CTO/X-Frame/Referrer/Permissions-Policy/HSTS present; no tainted innerHTML sink.
+Gate 3 Design:     N/A — hardening pass only; zero layout/visual changes (headers + ignore files), existing UI untouched.
+Gate 4 Perf/SEO:   PASS — title present; viewport + iOS PWA meta; manifest linked; fonts display=swap. (private single-user PWA; meta description/sitemap not applicable.)
+Gate 5 Content:    PASS — no placeholder text (TODO matches were Spanish "todos/todo"); all local audio refs resolve.
