@@ -1,6 +1,15 @@
-# Source materials (not deployed)
+# Source materials (not deployed) — raw multi-GB class recordings.
+# Keep these OUT of git: the repo only needs the small referenced mp3s, not
+# the originals (the *.transcript.json + nested recording folders are ~15 GB).
 audio/*.mp4
 audio/*.transcript.json
+audio/**/*.mp4
+audio/**/*.transcript.json
+audio/**/*.json
+# Nested raw-recording folders (Spanish source class sessions, multi-GB each)
+audio/Camara del corazon/
+audio/Mediumnidad/
+audio/Recrods Akashicos/
 
 # Working files
 work/

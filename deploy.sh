@@ -9,8 +9,18 @@ set -euo pipefail
 cd "$(dirname "$0")"
 DIST="${DIST:-/tmp/meditation-dist}"
 LIMIT=26214400   # 25 MiB
+
+# Bust the PWA cache: stamp the shell cache name with the current epoch so the
+# browser detects a new service worker, re-installs, and re-fetches index.html.
+# Without this, sw.js never changes and the old cached page is served forever.
+STAMP=$(date +%s)
+sed -i -E "s/(SHELL_CACHE = 'meditate-shell-)[^']*/\1${STAMP}/" sw.js
+echo "shell cache version -> meditate-shell-${STAMP}"
+
 rm -rf "$DIST"; mkdir -p "$DIST/audio"
-cp index.html manifest.json sw.js icon.svg "$DIST/"
+cp index.html manifest.json sw.js icon.svg oracion-registros-akashicos.pdf "$DIST/"
+# Security headers (CSP scoped to fonts + R2 audio worker) + defensive assets ignore.
+cp _headers .assetsignore "$DIST/"
 
 grep -oE 'audio/[^"'"'"' )]+\.mp3' index.html | sort -u | while read -r f; do
   base=$(basename "$f"); [ -f "$f" ] || { echo "MISSING $f"; continue; }

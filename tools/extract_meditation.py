@@ -203,6 +203,14 @@ def process(input_path: Path, out_path: Path = None, analyze_only: bool = False,
         for h in end_hits[:5]:
             print(f"    END   @ {fmt(h[0])}: \"{h[1]}\" → \"{h[2][:80]}\"")
 
+        # Always save transcript for inspection
+        transcript_path = (out_path.with_suffix(".transcript.json") if out_path
+                           else input_path.with_suffix(".transcript.json"))
+        with open(transcript_path, "w") as f:
+            json.dump([{"start": s.start, "end": s.end, "text": s.text} for s in segments],
+                      f, ensure_ascii=False, indent=2)
+        print(f"  transcript → {transcript_path.name}", flush=True)
+
         chosen = choose_segment(start_hits, end_hits, total_dur)
         if chosen is None:
             print("  ⚠ no cues found; consider manual review")
@@ -227,15 +235,6 @@ def process(input_path: Path, out_path: Path = None, analyze_only: bool = False,
             trim(input_path, out_path, start_time, end_time)
             result["out"] = str(out_path)
             result["out_size"] = out_path.stat().st_size
-
-        # Always dump the full transcript for inspection
-        if out_path:
-            transcript_path = out_path.with_suffix(".transcript.json")
-        else:
-            transcript_path = input_path.with_suffix(".transcript.json")
-        with open(transcript_path, "w") as f:
-            json.dump([{"start": s.start, "end": s.end, "text": s.text} for s in segments], f, ensure_ascii=False, indent=2)
-        print(f"  transcript → {transcript_path.name}")
 
         print(f"  done in {int(time.time()-t0)}s", flush=True)
         return result
