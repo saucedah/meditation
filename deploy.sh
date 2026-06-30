@@ -21,6 +21,8 @@ rm -rf "$DIST"; mkdir -p "$DIST/audio"
 cp index.html manifest.json sw.js icon.svg oracion-registros-akashicos.pdf "$DIST/"
 # Security headers (CSP scoped to fonts + R2 audio worker) + defensive assets ignore.
 cp _headers .assetsignore "$DIST/"
+# Document/screenshot images referenced by gallery cards.
+[ -d images ] && cp -r images "$DIST/"
 
 grep -oE 'audio/[^"'"'"' )]+\.mp3' index.html | sort -u | while read -r f; do
   base=$(basename "$f"); [ -f "$f" ] || { echo "MISSING $f"; continue; }

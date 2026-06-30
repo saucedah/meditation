@@ -1,7 +1,9 @@
-const SHELL_CACHE = 'meditate-shell-1780890829';
+const SHELL_CACHE = 'meditate-shell-1782785679';
 const AUDIO_CACHE = 'meditate-audio-v2';        // explicit offline downloads (UI-tracked)
 const STREAM_CACHE = 'meditate-audio-stream';   // transparent buffer for range playback
-const SHELL_ASSETS = ['./', './index.html', './manifest.json', './icon.svg'];
+const SHELL_ASSETS = ['./', './index.html', './manifest.json', './icon.svg',
+  './images/akashic-prayer-1.png', './images/akashic-prayer-2.png',
+  './images/akashic-prayer-3.png', './images/akashic-prayer-4.png'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(SHELL_CACHE).then(c => c.addAll(SHELL_ASSETS)));

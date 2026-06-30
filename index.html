@@ -136,6 +136,46 @@
     box-shadow: 0 4px 16px var(--accent-glow);
   }
 
+  /* Search box */
+  .search-wrap {
+    position: relative;
+    margin: 0 0 14px;
+  }
+  .search-wrap svg {
+    position: absolute; left: 16px; top: 50%; transform: translateY(-50%);
+    width: 18px; height: 18px; color: var(--text-faint); pointer-events: none;
+  }
+  .search-box {
+    width: 100%;
+    box-sizing: border-box;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 999px;
+    padding: 13px 44px 13px 44px;
+    color: var(--text);
+    font-size: 16px;
+    -webkit-appearance: none; appearance: none;
+    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .search-box::placeholder { color: var(--text-faint); }
+  .search-box:focus { outline: none; border-color: var(--accent); background: var(--card-bg-hover); }
+  .search-clear {
+    position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+    width: 32px; height: 32px; border: none; background: transparent;
+    color: var(--text-faint); cursor: pointer; border-radius: 50%;
+    display: none; align-items: center; justify-content: center;
+    font-size: 20px; line-height: 1;
+  }
+  .search-clear:hover { color: var(--text); background: var(--card-bg-hover); }
+  .search-wrap.has-text .search-clear { display: flex; }
+
+  .no-results {
+    text-align: center; color: var(--text-dim);
+    padding: 48px 24px; font-size: 15px; line-height: 1.6;
+  }
+  .no-results .big { display: block; font-size: 40px; margin-bottom: 12px; opacity: 0.7; }
+
   /* Empty favorites state */
   .empty-favs {
     text-align: center; color: var(--text-dim);
@@ -169,19 +209,18 @@
     font-variant-numeric: tabular-nums;
   }
 
-  .cards { display: grid; grid-template-columns: 1fr; gap: 12px; }
-  @media (min-width: 540px) { .cards { grid-template-columns: 1fr 1fr; } }
+  .cards { display: flex; flex-direction: column; gap: 8px; }
 
   .card {
     background: var(--card-bg);
     border: 1px solid var(--card-border);
-    border-radius: 18px;
-    padding: 18px 18px 16px;
+    border-radius: 14px;
+    padding: 12px 14px;
     cursor: pointer;
     transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
     backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-    display: flex; align-items: center; gap: 14px;
-    min-height: 76px;
+    display: flex; align-items: center; gap: 12px;
+    min-height: 64px;
     text-align: left;
     -webkit-user-select: none; user-select: none;
   }
@@ -190,7 +229,7 @@
   .card:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
   .card-icon {
-    width: 52px; height: 52px; border-radius: 14px;
+    width: 44px; height: 44px; border-radius: 12px;
     background: linear-gradient(135deg, var(--cat-color, var(--accent)) 0%, rgba(255,255,255,0.05) 100%);
     background-blend-mode: overlay;
     display: flex; align-items: center; justify-content: center;
@@ -326,6 +365,46 @@
   }
   .pdf-link:hover { background: var(--card-bg-hover); }
   .pdf-link svg { width: 16px; height: 16px; }
+
+  /* ───── Image gallery (fullscreen viewer) ───── */
+  #gallery {
+    position: fixed; inset: 0; z-index: 300;
+    background: #000; display: none; touch-action: pan-y;
+  }
+  #gallery.open { display: block; }
+  .gal-viewport { position: absolute; inset: 0; overflow: hidden; }
+  .gal-track { display: flex; height: 100%; transition: transform 0.3s ease; will-change: transform; }
+  .gal-track.dragging { transition: none; }
+  .gal-slide { flex: 0 0 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
+  .gal-slide img {
+    max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain;
+    background: #fff; user-select: none; -webkit-user-drag: none;
+  }
+  .gal-arrow {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    width: 50px; height: 84px; display: flex; align-items: center; justify-content: center;
+    background: rgba(255,255,255,0.12); color: #fff; border: none; cursor: pointer; z-index: 2;
+    -webkit-tap-highlight-color: transparent; backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+  }
+  .gal-arrow:active { background: rgba(255,255,255,0.24); }
+  .gal-arrow.prev { left: 0; border-radius: 0 14px 14px 0; }
+  .gal-arrow.next { right: 0; border-radius: 14px 0 0 14px; }
+  .gal-arrow svg { width: 26px; height: 26px; }
+  .gal-arrow[disabled] { opacity: 0.22; pointer-events: none; }
+  .gal-close {
+    position: absolute; top: calc(env(safe-area-inset-top, 0px) + 12px); right: 14px; z-index: 3;
+    width: 40px; height: 40px; border-radius: 50%;
+    background: rgba(0,0,0,0.45); color: #fff; border: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+  }
+  .gal-close svg { width: 22px; height: 22px; }
+  .gal-counter {
+    position: absolute; bottom: calc(env(safe-area-inset-bottom, 0px) + 14px); left: 50%;
+    transform: translateX(-50%); z-index: 3; color: #fff; font-size: 13px; font-weight: 600;
+    background: rgba(0,0,0,0.45); padding: 5px 12px; border-radius: 999px;
+    backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+  }
 
   /* ───── Continue / hero row ───── */
   .continue-row {
@@ -750,6 +829,16 @@
       <p>Find your inner peace</p>
     </div>
 
+    <div class="search-wrap" id="search-wrap">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+      </svg>
+      <input type="search" class="search-box" id="search-box" placeholder="Buscar meditación…"
+        autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+        aria-label="Buscar meditación" oninput="setSearch(this.value)">
+      <button class="search-clear" id="search-clear" aria-label="Limpiar búsqueda" onclick="clearSearch()">×</button>
+    </div>
+
     <div class="home-tabs" role="tablist" aria-label="Filtro">
       <button class="home-tab is-active" role="tab" data-filter="all"
         aria-selected="true" onclick="setHomeFilter('all')">Todas</button>
@@ -948,6 +1037,23 @@ The Records are now closed. Amen.</p>
   </div>
 </div>
 
+<!-- Fullscreen image gallery (document viewer) -->
+<div id="gallery" aria-hidden="true" role="dialog" aria-label="Visor de imágenes">
+  <div class="gal-viewport">
+    <div class="gal-track" id="gal-track"></div>
+  </div>
+  <button class="gal-arrow prev" id="gal-prev" type="button" aria-label="Anterior">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
+  </button>
+  <button class="gal-arrow next" id="gal-next" type="button" aria-label="Siguiente">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+  </button>
+  <button class="gal-close" id="gal-close" type="button" aria-label="Cerrar">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+  </button>
+  <div class="gal-counter" id="gal-counter">1 / 1</div>
+</div>
+
 <!-- Breathing dot (shown during playback) -->
 <div class="breath-dot" aria-hidden="true"></div>
 
@@ -998,6 +1104,10 @@ const R2_AUDIO = 'https://meditation-audio.saucedah.workers.dev/';
 
 const SESSIONS = [
   // Cleansing
+  { id: 'silvers-chant', cat: 'cleansing', emoji: '🔔',
+    title: 'Silvers Healing Academy · Full Chant',
+    desc: 'Cántico completo de sanación.',
+    file: 'audio/silvers-healing-academy-full-chant.mp3', duration: '3m' },
   { id: 'limpieza',  cat: 'cleansing', emoji: '✨',
     title: 'Limpieza Energética',
     desc: 'Mantras y cánticos de elevación espiritual.',
@@ -1155,6 +1265,14 @@ const SESSIONS = [
     title: 'Pathway Prayer · English',
     desc: 'Opening & closing prayer to access the Akashic Records, narrated (Linda Howe).',
     file: 'audio/na-oracion-akashicos-en.mp3', duration: '2m' },
+
+  // Akashic Record Prayer — original document pages (image gallery)
+  { id: 'akashic-prayer-pages', cat: 'nuevas', type: 'gallery', emoji: '📜',
+    title: 'Akashic Record Prayer',
+    desc: 'Pathway Prayer — páginas originales. Toca para ver a pantalla completa.',
+    duration: '4 imágenes',
+    images: ['images/akashic-prayer-1.png', 'images/akashic-prayer-2.png',
+             'images/akashic-prayer-3.png', 'images/akashic-prayer-4.png'] },
 ];
 
 const sessionsById = Object.fromEntries(SESSIONS.map(s => [s.id, s]));
@@ -1229,8 +1347,8 @@ function makeCard(s) {
   wrap.setAttribute('role', 'button');
   wrap.tabIndex = 0;
 
-  if (s.type === 'reading') {
-    const open = () => showPrayer();
+  if (s.type === 'reading' || s.type === 'gallery') {
+    const open = () => (s.type === 'gallery' ? openGallery(s) : showPrayer());
     wrap.addEventListener('click', open);
     wrap.addEventListener('keydown', ev => {
       if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); open(); }
@@ -1277,6 +1395,31 @@ function makeCard(s) {
 }
 
 let homeFilter = 'all'; // 'all' | 'favs'
+let searchQuery = '';
+
+function normalize(s) {
+  return (s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+}
+function matchesSearch(s) {
+  if (!searchQuery) return true;
+  const q = normalize(searchQuery);
+  return normalize(s.title).includes(q) || normalize(s.desc).includes(q);
+}
+function setSearch(v) {
+  searchQuery = v.trim();
+  const wrap = document.getElementById('search-wrap');
+  if (wrap) wrap.classList.toggle('has-text', searchQuery.length > 0);
+  // "Continue" hero is distracting while searching.
+  const cont = document.getElementById('continue-host');
+  if (cont) cont.style.display = (searchQuery || homeFilter === 'favs') ? 'none' : '';
+  renderCategories();
+}
+function clearSearch() {
+  const box = document.getElementById('search-box');
+  if (box) box.value = '';
+  setSearch('');
+  if (box) box.focus();
+}
 
 function setHomeFilter(f) {
   homeFilter = f;
@@ -1287,7 +1430,7 @@ function setHomeFilter(f) {
   }
   // "Continue" hero only belongs on the All tab.
   const cont = document.getElementById('continue-host');
-  if (cont) cont.style.display = (f === 'favs') ? 'none' : '';
+  if (cont) cont.style.display = (f === 'favs' || searchQuery) ? 'none' : '';
   renderCategories();
   window.scrollTo(0, 0);
 }
@@ -1297,7 +1440,7 @@ function renderCategories() {
   host.innerHTML = '';
 
   if (homeFilter === 'favs') {
-    const favItems = SESSIONS.filter(s => s.type !== 'reading' && isFav(s.id));
+    const favItems = SESSIONS.filter(s => s.type !== 'reading' && isFav(s.id) && matchesSearch(s));
     if (!favItems.length) {
       host.innerHTML = `
         <div class="empty-favs">
@@ -1321,9 +1464,11 @@ function renderCategories() {
       host.appendChild(fav);
     }
   } else {
+    let shown = 0;
     for (const cat of CATEGORIES) {
-      const items = SESSIONS.filter(s => s.cat === cat.id);
+      const items = SESSIONS.filter(s => s.cat === cat.id && matchesSearch(s));
       if (items.length === 0) continue;
+      shown += items.length;
 
       const section = document.createElement('section');
       section.className = 'category';
@@ -1339,6 +1484,13 @@ function renderCategories() {
       const cards = section.querySelector('.cards');
       for (const s of items) cards.appendChild(makeCard(s));
       host.appendChild(section);
+    }
+    if (shown === 0 && searchQuery) {
+      host.innerHTML = `
+        <div class="no-results">
+          <span class="big" aria-hidden="true">🔍</span>
+          No se encontró ninguna meditación para “${searchQuery}”.
+        </div>`;
     }
   }
 
@@ -1371,6 +1523,67 @@ function showPrayer() {
   showScreen('prayer');
   window.scrollTo(0, 0);
 }
+
+// ───── Image gallery (fullscreen, swipe + edge arrows) ─────
+let galImages = [], galIndex = 0;
+function galEl() { return document.getElementById('gallery'); }
+function openGallery(s) {
+  galImages = s.images || [];
+  if (!galImages.length) return;
+  galIndex = 0;
+  document.getElementById('gal-track').innerHTML = galImages
+    .map(src => `<div class="gal-slide"><img src="${src}" alt="" draggable="false"></div>`).join('');
+  const g = galEl();
+  g.classList.add('open');
+  g.setAttribute('aria-hidden', 'false');
+  document.body.style.overflow = 'hidden';
+  galRender();
+}
+function closeGallery() {
+  const g = galEl();
+  g.classList.remove('open');
+  g.setAttribute('aria-hidden', 'true');
+  document.body.style.overflow = '';
+}
+function galRender() {
+  document.getElementById('gal-track').style.transform = `translateX(${-galIndex * 100}%)`;
+  document.getElementById('gal-counter').textContent = `${galIndex + 1} / ${galImages.length}`;
+  document.getElementById('gal-prev').disabled = galIndex <= 0;
+  document.getElementById('gal-next').disabled = galIndex >= galImages.length - 1;
+}
+function galGo(delta) {
+  galIndex = Math.max(0, Math.min(galImages.length - 1, galIndex + delta));
+  galRender();
+}
+(function initGallery() {
+  const vp = document.querySelector('.gal-viewport');
+  const track = document.getElementById('gal-track');
+  let startX = 0, dx = 0, dragging = false, w = 0;
+  vp.addEventListener('touchstart', e => {
+    if (!galImages.length) return;
+    startX = e.touches[0].clientX; dx = 0; dragging = true; w = vp.clientWidth || 1;
+    track.classList.add('dragging');
+  }, { passive: true });
+  vp.addEventListener('touchmove', e => {
+    if (!dragging) return;
+    dx = e.touches[0].clientX - startX;
+    track.style.transform = `translateX(calc(${-galIndex * 100}% + ${dx}px))`;
+  }, { passive: true });
+  vp.addEventListener('touchend', () => {
+    if (!dragging) return;
+    dragging = false; track.classList.remove('dragging');
+    if (Math.abs(dx) > w * 0.18) galGo(dx < 0 ? 1 : -1); else galRender();
+  });
+  document.getElementById('gal-prev').addEventListener('click', () => galGo(-1));
+  document.getElementById('gal-next').addEventListener('click', () => galGo(1));
+  document.getElementById('gal-close').addEventListener('click', closeGallery);
+  document.addEventListener('keydown', e => {
+    if (!galEl().classList.contains('open')) return;
+    if (e.key === 'ArrowLeft') galGo(-1);
+    else if (e.key === 'ArrowRight') galGo(1);
+    else if (e.key === 'Escape') closeGallery();
+  });
+})();
 
 function togglePrayerOrig(btn) {
   const box = btn.nextElementSibling;
