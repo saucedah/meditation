@@ -1531,8 +1531,16 @@ function openGallery(s) {
   galImages = s.images || [];
   if (!galImages.length) return;
   galIndex = 0;
-  document.getElementById('gal-track').innerHTML = galImages
-    .map(src => `<div class="gal-slide"><img src="${src}" alt="" draggable="false"></div>`).join('');
+  // Build slides with DOM APIs (no HTML interpolation) so image paths are never parsed as markup.
+  const track = document.getElementById('gal-track');
+  track.replaceChildren(...galImages.map(src => {
+    const slide = document.createElement('div');
+    slide.className = 'gal-slide';
+    const img = document.createElement('img');
+    img.src = src; img.alt = ''; img.draggable = false;
+    slide.appendChild(img);
+    return slide;
+  }));
   const g = galEl();
   g.classList.add('open');
   g.setAttribute('aria-hidden', 'false');

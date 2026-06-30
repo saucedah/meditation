@@ -1,4 +1,4 @@
-const SHELL_CACHE = 'meditate-shell-1782785679';
+const SHELL_CACHE = 'meditate-shell-1782786057';
 const AUDIO_CACHE = 'meditate-audio-v2';        // explicit offline downloads (UI-tracked)
 const STREAM_CACHE = 'meditate-audio-stream';   // transparent buffer for range playback
 const SHELL_ASSETS = ['./', './index.html', './manifest.json', './icon.svg',
